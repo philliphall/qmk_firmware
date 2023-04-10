@@ -1,0 +1,2 @@
+#undef SOFT_SERIAL_PIN
+#define SOFT_SERIAL_PIN D2
