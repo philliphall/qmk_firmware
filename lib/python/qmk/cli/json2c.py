@@ -29,10 +29,15 @@ def json2c(cli):
     # Generate the keymap
     keymap_c = qmk.keymap.generate_c(user_keymap)
 
+    # If an output files was specified... 
     if cli.args.output:
         cli.args.output.parent.mkdir(parents=True, exist_ok=True)
+        
+        # If updating that file was requested...
         if cli.args.update:
             if cli.args.output.exists():
+                
+                # Use regex to isolate the keymap definition only and replace it in the target file
                 import re
                 keymap_only = (re.search('const uint16_t PROGMEM keymaps.+?};', keymap_c, re.DOTALL)).group()
                 with open(cli.args.output, "r") as f:
@@ -42,14 +47,18 @@ def json2c(cli):
                 cli.args.output.write_text(keymap_new)
                 if not cli.args.quiet:
                     cli.log.info('Updated keymap at %s.', cli.args.output)
+
             else:
                 cli.log.error('Update flag given, but the target file does not exist: %s', cli.args.output)
+        
+        # Not updating, just overwrite or add a new file
         else:
             if cli.args.output.exists():
                 cli.args.output.replace(cli.args.output.parent / (cli.args.output.name + '.bak'))
             cli.args.output.write_text(keymap_c)
             if not cli.args.quiet:
                 cli.log.info('Wrote keymap to %s.', cli.args.output)
-
+    
+    # No output file specified, just print the result
     else:
         print(keymap_c)
