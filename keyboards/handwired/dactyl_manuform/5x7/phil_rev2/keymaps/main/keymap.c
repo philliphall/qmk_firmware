@@ -95,6 +95,40 @@ void keyboard_post_init_user(void) {
 } */
 
 
+// Dynamic macro control
+// Not sure how to make this section dependent on dynamic macros being enabled.
+bool macro_1_recording = false;
+bool macro_2_recording = false;
+static bool macro_1_recorded = false;
+static bool macro_2_recorded = false;
+void dynamic_macro_record_start_user(int8_t direction) {
+    if (direction == 1) {
+        macro_1_recording = true;
+    }
+    else if (direction == -1) {
+        macro_2_recording = true;
+    }
+}
+void dynamic_macro_record_end_user(int8_t direction) {
+    if (direction == 1) {
+        macro_1_recording = false;
+        macro_1_recorded = true;
+    }
+    else if (direction == -1) {
+        macro_2_recording = false;
+        macro_2_recorded = true;
+    }
+}
+void dynamic_macro_play_user(int8_t direction) {
+    if (direction == 1 && macro_1_recorded == false) {
+        SEND_STRING("So sorry, I am running just a few minutes late.");
+    }
+    else if (direction == -1 && macro_2_recorded == false) {
+        SEND_STRING(":-)");
+    }
+}
+
+
 // OLED Control
 #ifdef OLED_ENABLE
 
@@ -118,30 +152,6 @@ static void render_logo(void) {
     };
 
     oled_write_P(qmk_logo, false);
-}
-
-// Not sure how to make this section dependent on dynamic macros being enabled.
-bool macro_1_recording = false;
-bool macro_2_recording = false;
-void dynamic_macro_record_start_user(int8_t direction) {
-    void oled_clear(void);
-    if (direction == 1) {
-        macro_1_recording = true;
-    }
-    else if (direction == -1) {
-        macro_2_recording = true;
-    }
-}
-void dynamic_macro_record_end_user(int8_t direction) {
-    if (direction == 1) {
-        macro_1_recording = false;
-    }
-    else if (direction == -1) {
-        macro_2_recording = false;
-    }
-    if (!(macro_1_recording || macro_2_recording)) {
-        void oled_clear(void);
-    }
 }
 
 // Runtime
@@ -189,16 +199,23 @@ bool oled_task_user(void) {
         }
 
         // Macro Recording
-        if (macro_1_recording || macro_2_recording) {
-            oled_write_P(PSTR("MACRO RECORDING\n"), false);
+        if (macro_1_recording && macro_2_recording) {
+            oled_write_P(PSTR("MACROS BOTH RECORDING\n"), false);
+            oled_write_P(PSTR("       WOW!\n"), false);
+        }
+        else if (macro_1_recording) {
+            oled_write_P(PSTR("MACRO 1 RECORDING\n"), false);
+        }
+        else if (macro_2_recording) {
+            oled_write_P(PSTR("MACRO 2 RECORDING\n"), false);
         }
         
         // Host Keyboard LED Status (mostly)
         led_t led_state = host_keyboard_led_state();
         oled_write_P(led_state.num_lock ? PSTR("             \n") : PSTR("Num lock OFF \n"), false);
-        oled_write_P(is_caps_word_on() ? PSTR("CAPS WORD ON/n") : PSTR("            /n"), false);
+        oled_write_P(is_caps_word_on() ? PSTR("CAPS WORD ON\n") : PSTR("            \n"), false);
         oled_write_P(led_state.caps_lock ? PSTR("CAPS LOCK") : PSTR("         "), false);
-        oled_write_P(led_state.scroll_lock ? PSTR("  SCR/n") : PSTR("     /n"), false);
+        oled_write_P(led_state.scroll_lock ? PSTR("  SCR\n") : PSTR("     \n"), false);
     }
     return false;
 }
