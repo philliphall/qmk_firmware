@@ -2,4 +2,4 @@
 #define SOFT_SERIAL_PIN D2
 #define ENCODERS_PAD_A { B7 }
 #define ENCODERS_PAD_B { C7 }
-#define ENCODER_RESOLUTION 1
+#define ENCODER_RESOLUTION 4

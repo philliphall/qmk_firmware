@@ -6,9 +6,9 @@ enum custom_keycodes {
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-	[0] = LAYOUT_5x7(KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_LBRC, CW_TOGG, KC_A, KC_S, KC_D, KC_F, KC_G, KC_LPRN, KC_LSFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_LCTL, KC_LGUI, KC_LEFT, KC_RGHT, LSFT_T(KC_BSPC), LT(3,KC_DEL), KC_LCTL, KC_LALT, KC_ENT, M_LATE, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL, KC_GRV, KC_RBRC, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_BSLS, KC_RPRN, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT, KC_DOWN, KC_UP, KC_PSCR, LGUI(KC_L), LT(2,KC_ENT), KC_SPC, KC_INS, MO(2), M_SMILEY, KC_WREF),
-	[1] = LAYOUT_5x7(KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_TAB, KC_Q, KC_W, KC_F, KC_P, KC_B, KC_LBRC, CW_TOGG, KC_A, KC_R, KC_S, KC_T, KC_G, KC_LPRN, KC_LSFT, KC_Z, KC_X, KC_C, KC_D, KC_V, KC_LCTL, KC_LGUI, KC_LEFT, KC_RGHT, KC_BSPC, KC_DEL, KC_LCTL, KC_LALT, KC_HOME, KC_END, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL, KC_GRV, KC_RBRC, KC_J, KC_L, KC_U, KC_Y, KC_SCLN, KC_BSLS, KC_RPRN, KC_M, KC_N, KC_E, KC_I, KC_O, KC_QUOT, KC_K, KC_H, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT, KC_DOWN, KC_UP, KC_PSCR, LGUI(KC_L), KC_ENT, KC_SPC, KC_INS, MO(2), KC_PGUP, KC_PGDN),
-	[2] = LAYOUT_5x7(KC_TRNS, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_TRNS, KC_TRNS, KC_TRNS, KC_UP, KC_TRNS, KC_BRIU, TO(4), KC_TRNS, KC_TRNS, KC_LEFT, KC_DOWN, KC_RGHT, KC_BRID, DF(0), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_MSTP, KC_MPLY, KC_MPRV, KC_MNXT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_TRNS, TO(3), LCTL(KC_BSPC), KC_BSPC, KC_UP, KC_DEL, LCTL(KC_DEL), KC_TRNS, DF(1), LCTL(KC_LEFT), KC_LEFT, KC_DOWN, KC_RGHT, LCTL(KC_RGHT), KC_TRNS, KC_PGUP, KC_HOME, KC_DOWN, KC_END, KC_PGDN, KC_TRNS, KC_VOLD, KC_VOLU, KC_MUTE, QK_BOOT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
+	[0] = LAYOUT_5x7(KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_LBRC, CW_TOGG, KC_A, KC_S, KC_D, KC_F, KC_G, KC_LPRN, KC_LSFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_LCTL, KC_LGUI, KC_LEFT, KC_RGHT, LSFT_T(KC_BSPC), LT(3,KC_DEL), KC_LCTL, KC_LALT, KC_ENT, DM_PLY1, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL, KC_GRV, KC_RBRC, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_BSLS, KC_RPRN, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT, KC_DOWN, KC_UP, KC_PSCR, LGUI(KC_L), LT(2,KC_ENT), KC_SPC, KC_INS, MO(2), DM_PLY2, KC_WREF),
+	[1] = LAYOUT_5x7(KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_TAB, KC_Q, KC_W, KC_F, KC_P, KC_B, KC_LBRC, CW_TOGG, KC_A, KC_R, KC_S, KC_T, KC_G, KC_LPRN, KC_LSFT, KC_Z, KC_X, KC_C, KC_D, KC_V, KC_LCTL, KC_LGUI, KC_LEFT, KC_RGHT, LSFT_T(KC_BSPC), LT(3,KC_DEL), KC_LCTL, KC_LALT, KC_ENT, DM_PLY1, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL, KC_GRV, KC_RBRC, KC_J, KC_L, KC_U, KC_Y, KC_SCLN, KC_BSLS, KC_RPRN, KC_M, KC_N, KC_E, KC_I, KC_O, KC_QUOT, KC_K, KC_H, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT, KC_DOWN, KC_UP, KC_PSCR, LGUI(KC_L), LT(2,KC_ENT), KC_SPC, KC_INS, MO(2), DM_PLY2, KC_WREF),
+	[2] = LAYOUT_5x7(KC_TRNS, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_TRNS, KC_TRNS, KC_TRNS, KC_UP, KC_TRNS, KC_BRIU, TO(4), KC_TRNS, KC_TRNS, KC_LEFT, KC_DOWN, KC_RGHT, KC_BRID, DF(0), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_MSTP, KC_MPLY, KC_MPRV, KC_MNXT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, DM_REC1, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_TRNS, TO(3), LCTL(KC_BSPC), KC_BSPC, KC_UP, KC_DEL, LCTL(KC_DEL), KC_TRNS, DF(1), LCTL(KC_LEFT), KC_LEFT, KC_DOWN, KC_RGHT, LCTL(KC_RGHT), KC_TRNS, KC_PGUP, KC_HOME, KC_DOWN, KC_END, KC_PGDN, KC_TRNS, KC_VOLD, KC_VOLU, KC_MUTE, QK_BOOT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, DM_REC2, KC_TRNS),
 	[3] = LAYOUT_5x7(KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_NUM, KC_CALC, LSFT(KC_5), KC_PSLS, KC_PMNS, KC_EQL, KC_TRNS, KC_TRNS, KC_LPRN, KC_7, KC_8, KC_9, KC_PAST, KC_TRNS, KC_TRNS, KC_RPRN, KC_4, KC_5, KC_6, KC_PPLS, KC_TRNS, KC_COLN, KC_1, KC_2, KC_3, KC_ENT, KC_TRNS, KC_0, KC_PDOT, KC_COMM, TO(0), KC_TRNS, KC_P0, LSFT(KC_4), LSFT(KC_5), KC_TRNS, KC_TRNS),
 	[4] = LAYOUT_5x7(KC_TRNS, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_TRNS, KC_CAPS, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_TRNS, KC_LSFT, KC_A, KC_S, KC_D, KC_F, KC_G, KC_TRNS, KC_LCTL, KC_Z, KC_X, KC_C, KC_V, KC_LCTL, KC_NO, KC_I, KC_M, KC_SPC, KC_ESC, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, TO(0), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS)
 };
@@ -98,6 +98,7 @@ void keyboard_post_init_user(void) {
 // OLED Control
 #ifdef OLED_ENABLE
 
+// Set up the OLED
 static bool oled_logo_on = true;
 oled_rotation_t oled_init_user(oled_rotation_t rotation) { 
     return OLED_ROTATION_180;
@@ -119,6 +120,30 @@ static void render_logo(void) {
     oled_write_P(qmk_logo, false);
 }
 
+// Not sure how to make this section dependent on dynamic macros being enabled.
+bool macro_1_recording = false;
+bool macro_2_recording = false;
+void dynamic_macro_record_start_user(int8_t direction) {
+    void oled_clear(void);
+    if (direction == 1) {
+        macro_1_recording = true;
+    }
+    else if (direction == -1) {
+        macro_2_recording = true;
+    }
+}
+void dynamic_macro_record_end_user(int8_t direction) {
+    if (direction == 1) {
+        macro_1_recording = false;
+    }
+    else if (direction == -1) {
+        macro_2_recording = false;
+    }
+    if (!(macro_1_recording || macro_2_recording)) {
+        void oled_clear(void);
+    }
+}
+
 // Runtime
 bool oled_task_user(void) {
     
@@ -126,13 +151,11 @@ bool oled_task_user(void) {
     if (timer_elapsed32(oled_logo_timer) < 2000 && oled_logo_on == true) {
         oled_set_brightness(255);
         render_logo();
-        return false;
     }
 
     else if (timer_elapsed32(oled_logo_timer) < 10000 && oled_logo_on == true) {
         oled_set_brightness(32);
         render_logo();
-        return false;
     }
     
     // Host Keyboard Layer Status
@@ -162,18 +185,22 @@ bool oled_task_user(void) {
                 oled_write_P(PSTR("Gaming\n"), false);
                 break;
             default:
-                // Or use the write_ln shortcut over adding '\n' to the end of your string
-                oled_write_ln_P(PSTR("Undefined\n"), false);
+                oled_write_P(PSTR("Undefined\n"), false);
         }
 
-        // Host Keyboard LED Status
+        // Macro Recording
+        if (macro_1_recording || macro_2_recording) {
+            oled_write_P(PSTR("MACRO RECORDING\n"), false);
+        }
+        
+        // Host Keyboard LED Status (mostly)
         led_t led_state = host_keyboard_led_state();
         oled_write_P(led_state.num_lock ? PSTR("             \n") : PSTR("Num lock OFF \n"), false);
-        oled_write_P(led_state.caps_lock ? PSTR("CAPS LOCK\n") : PSTR("         \n"), false);
-        oled_write_P(led_state.scroll_lock ? PSTR("  SCR ") : PSTR("      "), false);
-        
-        return false;
+        oled_write_P(is_caps_word_on() ? PSTR("CAPS WORD ON/n") : PSTR("            /n"), false);
+        oled_write_P(led_state.caps_lock ? PSTR("CAPS LOCK") : PSTR("         "), false);
+        oled_write_P(led_state.scroll_lock ? PSTR("  SCR/n") : PSTR("     /n"), false);
     }
+    return false;
 }
 #endif
 
