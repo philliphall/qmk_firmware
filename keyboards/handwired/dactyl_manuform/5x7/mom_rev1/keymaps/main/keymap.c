@@ -178,23 +178,15 @@ bool oled_task_user(void) {
 // Encoder Use
 #ifdef ENCODER_ENABLE
 
-// Super Encoder Timer
-uint16_t encoder_timeout = 900;
-uint16_t encoder_timer = 0;
+// ALT TAB Encoder Timer
 bool is_alt_tab_active = false;
-bool is_backspace_active = false;
+uint16_t alt_tab_timer = 0;
 
-// Reset mode when timer expired
 void matrix_scan_user(void) {
     if (is_alt_tab_active) {
-        if (timer_elapsed(encoder_timer) > encoder_timeout) {
-            unregister_code(KC_LALT);
-            is_alt_tab_active = false;
-        }
-    }
-    if (is_backspace_active) {
-        if (timer_elapsed(encoder_timer) > encoder_timeout) {
-            is_backspace_active = false;
+        if (timer_elapsed(alt_tab_timer) > 1000) {
+        unregister_code(KC_LALT);
+        is_alt_tab_active = false;
         }
     }
 }
@@ -209,48 +201,27 @@ void matrix_scan_user(void) {
  * true when you turned the encoder clockwise, and false otherwise.
  */
 bool encoder_update_user(uint8_t index, bool clockwise) {
-    
-    // First encoder - Super alt-tab and super-backspace
-    if (index == 0) { 
+  /* With an if statement we can check which encoder was turned. */
+    if (index == 0) { /* First encoder - Switch Windows */
         if (clockwise) {
-            
-            // Super backspace mode
-            if (is_backspace_active) {
-                tap_code16(C(KC_Z)); // Undo
-            }
-            
-            // Super alt-tab mode
-            else if (is_alt_tab_active) {
-                tap_code16(KC_TAB);               
-            }
-
-            // Otherwise activate super alt-tab mode
-            else {
+            if (!is_alt_tab_active) {
                 is_alt_tab_active = true;
                 register_code(KC_LALT);
-                tap_code16(KC_TAB);
             }
+            alt_tab_timer = timer_read();
+            tap_code16(KC_TAB);
         } 
         else { // Counterclockwise
-            
-            // Super alt-tab mode
-            if (is_alt_tab_active) {
-                tap_code16(S(KC_TAB)); // Alt is already registered
-            }
-
-            // Otherwise activate (or just continue) super backspace mode
-            else {
-                is_backspace_active = true;
+            if (!is_alt_tab_active) {
                 tap_code16(KC_BSPC);
             }
+            else {
+                alt_tab_timer = timer_read();
+                tap_code16(S(KC_TAB));
+            }
         }
-
-        // Update the timer regardless of which direction the encoder was turned or what mode we are in
-        encoder_timer = timer_read();
     } 
-    
-    // Second encoder - ctrl-tab
-    else if (index == 1) {
+    else if (index == 1) { /* Switch Tabs */
         if (clockwise) {
             tap_code16(C(KC_TAB));
         } 
