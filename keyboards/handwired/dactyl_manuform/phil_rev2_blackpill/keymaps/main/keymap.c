@@ -223,32 +223,32 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
         case DPI_INC:
             if (record->event.pressed) {
-                dprintf("DPI_INC was pressed. Original DPI: %u. ", current_dpi);
+                dprintf("DPI_INC was pressed. Original DPI: %u.\n", current_dpi);
                 current_dpi = min(DPI_UPPER_BOUND, DPI_INCREMENT * floor(((current_dpi * DPI_INCREMENT / 100) / DPI_INCREMENT) + 0.5));
-                dprintf("New DPI: %u. ", current_dpi);
+                dprintf("New DPI: %u.\n", current_dpi);
                 pointing_device_set_cpi(current_dpi);
             }
             return false;
         case DPI_DEC:
             if (record->event.pressed) {
-                dprintf("DPI_DEC was pressed. Original DPI: %u. ", current_dpi);
-                current_dpi = max(DPI_LOWER_BOUND, DPI_INCREMENT * floor(((current_dpi * DPI_INCREMENT / 100) / DPI_INCREMENT) + 0.5));
-                dprintf("New DPI: %u. ", current_dpi);
+                dprintf("DPI_DEC was pressed. Original DPI: %u.\n", current_dpi);
+                current_dpi = max(DPI_LOWER_BOUND, DPI_DECREMENT * floor(((current_dpi * DPI_DECREMENT / 100) / DPI_DECREMENT) + 0.5));
+                dprintf("New DPI: %u.\n", current_dpi);
                 pointing_device_set_cpi(current_dpi);
             }
             return false;
         case SEN_INC:
             if (record->event.pressed) {
-                dprintf("SEN_INC was pressed. Original SEN: %u. ", current_sen);
+                dprintf("SEN_INC was pressed. Original SEN: %u.\n", current_sen);
                 current_sen = min(65535, (uint16_t)current_sen * SEN_INCREMENT / 100);
-                dprintf("New SEN: %u. ", current_sen);
+                dprintf("New SEN: %u.\n", current_sen);
             }
             return false;
         case SEN_DEC:
             if (record->event.pressed) {
-                dprintf("SEN_DEC was pressed. Original SEN: %u. ", current_sen);
+                dprintf("SEN_DEC was pressed. Original SEN: %u.\n", current_sen);
                 current_sen = max(2, (uint16_t)current_sen * SEN_DECREMENT / 100);
-                dprintf("New SEN: %u. ", current_sen);
+                dprintf("New SEN: %u.\n", current_sen);
             }
             return false;
     }
@@ -445,7 +445,7 @@ bool oled_task_user(void) {
 uint16_t scan_timer = 0;
 
 void msu_debug_i2c(void) { // To be executed at matrix_scan_user.
-    if (timer_elapsed(scan_timer) > 5000) {
+    if (timer_elapsed(scan_timer) > 50000) {
         uint8_t nDevices = 0;
 
         dprintf("Scanning...\n");
@@ -490,8 +490,10 @@ void matrix_scan_user(void) {
 void keyboard_post_init_user(void) {
     // Debug levels
     debug_enable = true;
-    debug_matrix = true;
-
+    debug_matrix=false;
+    debug_keyboard=false;
+    debug_mouse=false;
+    
     kpiu_oled_timer();
     kpiu_debug_i2c();    
 }
