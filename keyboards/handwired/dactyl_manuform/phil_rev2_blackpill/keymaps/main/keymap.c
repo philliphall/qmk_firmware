@@ -31,6 +31,33 @@ enum layer_names {
 };
 
 
+// *******************
+// Customize Caps Word
+// *******************
+// This is copied from the default documented here: https://github.com/qmk/qmk_firmware/blob/master/docs/feature_caps_word.md
+// All I really want is to stop the - key from being shifted. Drives me nuts. 
+bool caps_word_press_user(uint16_t keycode) {
+    switch (keycode) {
+        // Keycodes that continue Caps Word, with shift applied.
+        case KC_A ... KC_Z:
+        //case KC_MINS:
+            add_weak_mods(MOD_BIT(KC_LSFT));  // Apply shift to next key.
+            return true;
+
+        // Keycodes that continue Caps Word, without shifting.
+        case KC_1 ... KC_0:
+        case KC_BSPC:
+        case KC_DEL:
+        case KC_UNDS:
+        case KC_MINS:
+            return true;
+
+        default:
+            return false;  // Deactivate Caps Word.
+    }
+}
+
+
 // *********************
 // Dynamic macro control
 // *********************
@@ -209,13 +236,13 @@ void pointing_device_init_user(void) {
 }
 uint16_t current_sen = SEN_INITIAL;
 
-// Wouldn't you know C doesn't implement min and max?
+/* // Wouldn't you know C doesn't implement min and max? Oh wait, part of math.h that I am including for floor anyway.
 #ifndef min
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 #endif
 #ifndef max
 #define max(a,b) (((a) > (b)) ? (a) : (b))
-#endif
+#endif */ 
 #include <math.h> // Needed for the floor function
 
 // Make DPI and sensitivity increment and decrement buttons work. 
@@ -224,7 +251,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case DPI_INC:
             if (record->event.pressed) {
                 dprintf("DPI_INC was pressed. Original DPI: %u.\n", current_dpi);
-                current_dpi = min(DPI_UPPER_BOUND, DPI_INCREMENT * floor(((current_dpi * DPI_INCREMENT / 100) / DPI_INCREMENT) + 0.5));
+                current_dpi = fmin(DPI_UPPER_BOUND, floor(((current_dpi * DPI_INCREMENT / 100) / DPI_STEP) + 0.5) * DPI_STEP);
                 dprintf("New DPI: %u.\n", current_dpi);
                 pointing_device_set_cpi(current_dpi);
             }
@@ -232,7 +259,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case DPI_DEC:
             if (record->event.pressed) {
                 dprintf("DPI_DEC was pressed. Original DPI: %u.\n", current_dpi);
-                current_dpi = max(DPI_LOWER_BOUND, DPI_DECREMENT * floor(((current_dpi * DPI_DECREMENT / 100) / DPI_DECREMENT) + 0.5));
+                current_dpi = fmax(DPI_LOWER_BOUND, floor(((current_dpi * DPI_DECREMENT / 100) / DPI_STEP) + 0.5) * DPI_STEP);
                 dprintf("New DPI: %u.\n", current_dpi);
                 pointing_device_set_cpi(current_dpi);
             }
@@ -240,14 +267,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case SEN_INC:
             if (record->event.pressed) {
                 dprintf("SEN_INC was pressed. Original SEN: %u.\n", current_sen);
-                current_sen = min(65535, (uint16_t)current_sen * SEN_INCREMENT / 100);
+                current_sen = fmin(65535, (uint16_t)current_sen * SEN_INCREMENT / 100);
                 dprintf("New SEN: %u.\n", current_sen);
             }
             return false;
         case SEN_DEC:
             if (record->event.pressed) {
                 dprintf("SEN_DEC was pressed. Original SEN: %u.\n", current_sen);
-                current_sen = max(2, (uint16_t)current_sen * SEN_DECREMENT / 100);
+                current_sen = fmax(2, (uint16_t)current_sen * SEN_DECREMENT / 100);
                 dprintf("New SEN: %u.\n", current_sen);
             }
             return false;
@@ -279,8 +306,8 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     movement_accumulated_x -= (int8_t)movement_accumulated_x;
     movement_accumulated_y -= (int8_t)movement_accumulated_y;
 
-    // Scrolling while in the _NUM layer (which is just better than dedicating a separate key for that!)
-    if (layer_state_is(_NUM)) {
+    // Scrolling while in the _FN layer (which is just better than dedicating a separate key for that!)
+    if (layer_state_is(_FN)) {
         // Calculate and accumulate scroll values based on mouse movement and divisors
         #ifdef POINTING_DEVICE_INVERT_Y
             scroll_accumulated_v -= (float)mouse_report.y / SCROLL_DIVISOR_V;
@@ -306,8 +333,8 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         mouse_report.y = 0;
     }
 
-    // And we'll also do precision mouse movements when in the _FN layer.
-    else if (layer_state_is(_FN)) {
+    // And we'll also do precision mouse movements when in the _NUM layer.
+    else if (layer_state_is(_NUM)) {
         // Calculate and accumulate precise movement
         precision_accumulated_x += (float)mouse_report.x / PRECISION_DIVISOR;
         precision_accumulated_y += (float)mouse_report.y / PRECISION_DIVISOR;
@@ -370,6 +397,7 @@ bool oled_task_user(void) {
     else {
         if (oled_logo_on) {
             void oled_clear(void);
+            oled_write_P(PSTR("\n\n\n\n"), false);
             oled_set_brightness(128);
             oled_logo_on = false;
         }
@@ -398,7 +426,7 @@ bool oled_task_user(void) {
         }
         
         // Macro Recording
-        #ifdef DYNAMIC_MACRO_ENABLE
+/*         #ifdef DYNAMIC_MACRO_ENABLE
         if (macro_1_recording && macro_2_recording) {
             oled_write_P(PSTR("MACROS BOTH RECORDING\n"), false);
             // oled_write_P(PSTR("       WOW!\n"), false);
@@ -409,16 +437,16 @@ bool oled_task_user(void) {
         else if (macro_2_recording) {
             oled_write_P(PSTR("MACRO 2 RECORDING\n"), false);
         }
-        #endif // DYNAMIC_MACRO_ENABLE
+        #endif // DYNAMIC_MACRO_ENABLE */
 
         // Trackball DPI Reporting
-        #ifdef POINTING_DEVICE_ENABLE
+/*         #ifdef POINTING_DEVICE_ENABLE
         oled_write_P(PSTR("DPI:"), false);
         oled_write_P(PSTR(get_u16_str(current_dpi, ' ')), false);
         oled_write_P(PSTR(" SEN:"), false);
         oled_write_P(PSTR(get_u16_str((uint16_t)current_sen / 10, ' ')), false);
         oled_write_P(PSTR("\n"), false);
-        #endif
+        #endif */
         
         // Host Keyboard LED Status (mostly)
         led_t led_state = host_keyboard_led_state();
@@ -432,51 +460,13 @@ bool oled_task_user(void) {
             oled_write_P(led_state.caps_lock ? PSTR("CAPS LOCK  ") : PSTR(""), false);
             oled_write_P(led_state.scroll_lock ? PSTR("SCR\n") : PSTR("\n"), false);
         }
+
+        // Clear the rest of the page
+        oled_advance_page(true);
     }
     return false;
 }
 #endif // OLED_ENABLE
-
-
-// Temporary addition of I2C Scanning for troubleshooting purposes
-#include "i2c_master.h"
-#include "debug.h"
-
-uint16_t scan_timer = 0;
-
-void msu_debug_i2c(void) { // To be executed at matrix_scan_user.
-    if (timer_elapsed(scan_timer) > 50000) {
-        uint8_t nDevices = 0;
-
-        dprintf("Scanning...\n");
-
-        for (uint8_t address = 1; address < 127; address++) {
-            // The i2c_scanner uses the return value of
-            // i2c_start to see if a device did acknowledge to the address.
-            i2c_status_t error = i2c_start(address << 1);
-            if (error == I2C_STATUS_SUCCESS) {
-                i2c_stop();
-                dprintf("  I2C device found at address 0x%02X\n", address);
-                nDevices++;
-            } 
-            else {
-                // dprintf("  Unknown error (%u) at address 0x%02X\n", error, address);
-            }
-        }
-
-        if (nDevices == 0)
-            dprintf("No I2C devices found\n");
-        else
-            dprintf("done\n");
-        scan_timer = timer_read();
-    }
-}
-
-void kpiu_debug_i2c(void) { // To be executed at keyboard_post_init_user.
-    i2c_init();
-    scan_timer = timer_read();
-}
-
 
 
 
@@ -484,7 +474,6 @@ void kpiu_debug_i2c(void) { // To be executed at keyboard_post_init_user.
 // Execute all my custom functions neatly organized above inside the proper API calls
 void matrix_scan_user(void) {
     msu_encoder_super_timer();
-    msu_debug_i2c();
 }
 
 void keyboard_post_init_user(void) {
@@ -495,7 +484,6 @@ void keyboard_post_init_user(void) {
     debug_mouse=false;
     
     kpiu_oled_timer();
-    kpiu_debug_i2c();    
 }
 
 
