@@ -44,7 +44,13 @@
 
 /* Trackball sensor config  */
 #define PMW33XX_CS_PIN     B0
+#define PMW33XX_LIFTOFF_DISTANCE 0x03
 #define MOUSE_EXTENDED_REPORT
 #define SPLIT_POINTING_ENABLE
 #define POINTING_DEVICE_RIGHT
 #define POINTING_DEVICE_INVERT_Y
+#define POINTING_DEVICE_DEBUG
+
+/* Because someone else did */
+#define CRC8_USE_TABLE
+#define CRC8_OPTIMIZE_SPEED

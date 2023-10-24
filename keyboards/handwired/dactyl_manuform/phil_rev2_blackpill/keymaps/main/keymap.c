@@ -231,29 +231,38 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
 
 // set initial DPI and Sensitivity
 uint16_t current_dpi = DPI_INITIAL;
+uint16_t first_dpi = 0;
+uint16_t init_dpi = 1;
+uint16_t detected_dpi = 1;
+bool reported = false;
 void pointing_device_init_user(void) { 
+    first_dpi = pointing_device_get_cpi();
     pointing_device_set_cpi(current_dpi);
+    init_dpi = pointing_device_get_cpi();
 }
 uint16_t current_sen = SEN_INITIAL;
 
-/* // Wouldn't you know C doesn't implement min and max? Oh wait, part of math.h that I am including for floor anyway.
-#ifndef min
-#define min(a,b) (((a) < (b)) ? (a) : (b))
-#endif
-#ifndef max
-#define max(a,b) (((a) > (b)) ? (a) : (b))
-#endif */ 
-#include <math.h> // Needed for the floor function
+
+#include <math.h> // Needed for the floor, fmin, and fmax functions below
 
 // Make DPI and sensitivity increment and decrement buttons work. 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
         case DPI_INC:
             if (record->event.pressed) {
-                dprintf("DPI_INC was pressed. Original DPI: %u.\n", current_dpi);
+                if (!reported) {
+                    dprintf("First DPI: %u. After Initialization: %u\n", first_dpi, init_dpi);
+                    reported = true;
+                }
+                detected_dpi = pointing_device_get_cpi();
+                wait_ms(50); 
+                dprintf("DPI_INC was pressed. Original DPI configured: %u. Original DPI detected: %u\n", current_dpi, detected_dpi);
                 current_dpi = fmin(DPI_UPPER_BOUND, floor(((current_dpi * DPI_INCREMENT / 100) / DPI_STEP) + 0.5) * DPI_STEP);
-                dprintf("New DPI: %u.\n", current_dpi);
                 pointing_device_set_cpi(current_dpi);
+                wait_ms(50); 
+                detected_dpi = pointing_device_get_cpi();
+                wait_ms(50); 
+                dprintf("New DPI configured: %u. New DPI detected: %u\n", current_dpi, detected_dpi);
             }
             return false;
         case DPI_DEC:
@@ -364,9 +373,7 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 }
 
 static uint32_t oled_logo_timer;
-void kpiu_oled_timer(void) { // To be executed in keyboard_post_init_user.
-    oled_logo_timer = timer_read32();
-}
+void kpiu_oled_timer(void) { oled_logo_timer = timer_read32(); }
 
 // Logo Definition
 static void render_logo(void) {
@@ -469,11 +476,49 @@ bool oled_task_user(void) {
 #endif // OLED_ENABLE
 
 
+// custom function for temporary sensor troubleshooting
+uint8_t motion_found = 0x00;
+uint8_t motion_stored = 0x00;
+uint8_t squal_found = 0x00; 
+uint16_t squal_frequency = 500;
+uint16_t squal_timer = 0;
+void kpiu_squal_timer(void) { squal_timer = timer_read(); } // To be executed in keyboard_post_init_user.
+uint16_t reinit_timer = 0;
+void kpiu_reinit_timer(void) { reinit_timer = timer_read(); } // To be executed in keyboard_post_init_user.
+uint8_t observation_found = 0x00;
+
+void debug_sensor_custom(void) {
+    
+    // Motion
+/*     motion_found = pmw33xx_read(0, REG_Motion);
+    if (motion_found != motion_stored) {
+        dprintf("Motion bit has been set to %x.\n", motion_found);
+        motion_stored = motion_found;
+    } */
+
+    // Squal - (measures quality of image capture)
+    if (timer_elapsed(squal_timer) > squal_frequency) {
+        squal_timer = timer_read(); 
+        dprintf("Squal features: %4d; Thresh: %02x; SROM Observation: %02x; SROM_ID: %02x; CPI Read: %5d\n", pmw33xx_read(0, REG_SQUAL) * 8, pmw33xx_read(0, REG_Min_SQ_Run), pmw33xx_read(0, REG_Observation), pmw33xx_read(0, REG_SROM_ID), pointing_device_get_cpi());
+        //dprintf("Observation value: %s\n", pmw33xx_read(0, REG_Observation) && 0x20 ? "SROM Running" : "Not running");
+        pmw33xx_write(0, REG_Observation, 0x00);
+        //dprintf("SROM_ID: %u\n", pmw33xx_read(0, REG_SROM_ID));
+        
+    }
+    if (timer_elapsed(reinit_timer) > 15000) {
+        reinit_timer = timer_read(); 
+        pmw33xx_init(0);
+        wait_ms(50);
+        pmw33xx_write(0, REG_Min_SQ_Run, 0x01);
+    }
+    
+}
 
 
 // Execute all my custom functions neatly organized above inside the proper API calls
 void matrix_scan_user(void) {
     msu_encoder_super_timer();
+    //debug_sensor_custom();
 }
 
 void keyboard_post_init_user(void) {
@@ -484,6 +529,8 @@ void keyboard_post_init_user(void) {
     debug_mouse=false;
     
     kpiu_oled_timer();
+    kpiu_squal_timer(); 
+    kpiu_reinit_timer();
 }
 
 

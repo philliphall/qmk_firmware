@@ -60,9 +60,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #        define POINTING_DEVICE_ROTATION_90
 #    endif
 #    define POINTING_DEVICE_MOTION_PIN_ACTIVE_LOW
-#elif defined(POINTING_DEVICE_DRIVER_pmw3360) || defined(POINTING_DEVICE_DRIVER_pmw3389)
+#elif defined(POINTING_DEVICE_DRIVER_pmw3360)
 #    include "spi_master.h"
-#    include "drivers/sensors/pmw33xx_common.h"
+#    include "drivers/sensors/pmw3360_common.h"
+#    define POINTING_DEVICE_MOTION_PIN_ACTIVE_LOW
+#elif defined(POINTING_DEVICE_DRIVER_pmw3389)
+#    include "spi_master.h"
+#    include "drivers/sensors/pmw3389.h"
 #    define POINTING_DEVICE_MOTION_PIN_ACTIVE_LOW
 #else
 void           pointing_device_driver_init(void);
