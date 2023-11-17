@@ -66,6 +66,10 @@ bool pmw33xx_write(uint8_t sensor, uint8_t reg_addr, uint8_t data) {
     // tSWW/tSWR (=18us) minus tSCLK-NCS. Could be shortened, but it looks like
     // a safe lower bound
     wait_us(145);
+
+    if (reg_addr != REG_Motion_Burst) {
+        pd_dprintf("Wrote to register %02x the following data: %02x\n", reg_addr, data);
+    }
     return true;
 }
 
@@ -80,7 +84,7 @@ uint8_t pmw33xx_read(uint8_t sensor, uint8_t reg_addr) {
     // tSRAD (=160us)
     wait_us(160);
     uint8_t data = spi_read();
-    //pd_dprintf("Read from register %2x the following data: %2x\n", reg_addr, data);
+    pd_dprintf("Read from register %02x the following data: %02x\n", reg_addr, data);
 
     // tSCLK-NCS, 120ns
     wait_us(1);
@@ -181,9 +185,10 @@ bool pmw33xx_init(uint8_t sensor) {
 
     // Configure the rest of the registers
     wait_ms(10);
-    pmw33xx_set_cpi(sensor, PMW33XX_CPI);
 
+    //pmw33xx_set_cpi(sensor, PMW33XX_CPI);
     wait_ms(1);
+
 
     pmw33xx_write(sensor, REG_Config2, 0x00);
     pmw33xx_write(sensor, REG_Angle_Tune, CONSTRAIN(ROTATIONAL_TRANSFORM_ANGLE, -127, 127));

@@ -691,7 +691,10 @@ static bool pointing_handlers_master(matrix_row_t master_matrix[], matrix_row_t 
     report_mouse_t  temp_state;
     uint16_t        temp_cpi;
     bool            okay = read_if_checksum_mismatch(GET_POINTING_CHECKSUM, GET_POINTING_DATA, &last_update, &temp_state, &split_shmem->pointing.report, sizeof(temp_state));
+    //dprintf("In transactions.c pointing_handlers_master. Value of \"okay\" is: %d\n", okay);
     if (okay) pointing_device_set_shared_report(temp_state);
+    //dprintf("In transactions.c pointing_handlers_master. Value of \"temp_state\" is: %d\n", okay);
+    //dprintf("   dx: %i dy: %i\n", temp_state.x, temp_state.y);
     temp_cpi = pointing_device_get_shared_cpi();
     if (temp_cpi && last_cpi != temp_cpi) {
         split_shmem->pointing.cpi = temp_cpi;
@@ -741,6 +744,8 @@ static void pointing_handlers_slave(matrix_row_t master_matrix[], matrix_row_t s
     split_shared_memory_lock();
     memcpy(&split_shmem->pointing, &pointing, sizeof(split_slave_pointing_sync_t));
     split_shared_memory_unlock();
+    //dprintf("In transactions.c pointing_handlers_slave. Sending data: %d\n", sizeof(split_slave_pointing_sync_t));
+
 }
 
 #    define TRANSACTIONS_POINTING_MASTER() TRANSACTION_HANDLER_MASTER(pointing)
