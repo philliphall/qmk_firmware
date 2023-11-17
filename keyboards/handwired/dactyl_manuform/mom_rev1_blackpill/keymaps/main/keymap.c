@@ -577,11 +577,12 @@ uint8_t observation_found = 0x00;
 void msu_debug_sensor_custom(void) {
     
     // Motion
-/*     motion_found = pmw33xx_read(0, REG_Motion);
-    if (motion_found != motion_stored) {
-        dprintf("Motion bit has been set to %x.\n", motion_found);
-        motion_stored = motion_found;
-    } */
+    
+    // motion_found = pmw33xx_read(0, REG_Motion);
+    // if (motion_found != motion_stored) {
+    //     dprintf("Motion bit has been set to %x.\n", motion_found);
+    //     motion_stored = motion_found;
+    // }
 
     // Squal - (measures quality of image capture)
     if (timer_elapsed(squal_timer) > squal_frequency) {
@@ -592,10 +593,10 @@ void msu_debug_sensor_custom(void) {
         
     }
 
-    if (timer_elapsed(reinit_timer) > 15000) {
-        reinit_timer = timer_read();
-        pmw33xx_init(0);
-    }
+    // if (timer_elapsed(reinit_timer) > 15000) {
+    //     reinit_timer = timer_read();
+    //     pmw33xx_init(0);
+    // }
     
 }
 
