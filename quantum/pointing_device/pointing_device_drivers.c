@@ -33,7 +33,7 @@ report_mouse_t adns5050_get_report(report_mouse_t mouse_report) {
     report_adns5050_t data = adns5050_read_burst();
 
     if (data.dx != 0 || data.dy != 0) {
-        pd_dprintf("Raw ] X: %d, Y: %d\n", data.dx, data.dy);
+        //pd_dprintf("Raw ] X: %d, Y: %d\n", data.dx, data.dy);
         mouse_report.x = (mouse_xy_report_t)data.dx;
         mouse_report.y = (mouse_xy_report_t)data.dy;
     }
@@ -55,7 +55,7 @@ report_mouse_t pmw3320_get_report(report_mouse_t mouse_report) {
     report_pmw3320_t data = pmw3320_read_burst();
 
     if (data.dx != 0 || data.dy != 0) {
-        pd_dprintf("Raw ] X: %d, Y: %d\n", data.dx, data.dy);
+        //pd_dprintf("Raw ] X: %d, Y: %d\n", data.dx, data.dy);
         mouse_report.x = (mouse_xy_report_t)data.dx;
         mouse_report.y = (mouse_xy_report_t)data.dy;
     }
@@ -96,7 +96,7 @@ const pointing_device_driver_t pointing_device_driver = {
 report_mouse_t analog_joystick_get_report(report_mouse_t mouse_report) {
     report_analog_joystick_t data = analog_joystick_read();
 
-    pd_dprintf("Raw ] X: %d, Y: %d\n", data.x, data.y);
+    //pd_dprintf("Raw ] X: %d, Y: %d\n", data.x, data.y);
 
     mouse_report.x = data.x;
     mouse_report.y = data.y;
@@ -173,7 +173,7 @@ report_mouse_t cirque_pinnacle_get_report(report_mouse_t mouse_report) {
     }
 
     if (touchData.touchDown) {
-        pd_dprintf("cirque_pinnacle touchData x=%4d y=%4d z=%2d\n", touchData.xValue, touchData.yValue, touchData.zValue);
+        //pd_dprintf("cirque_pinnacle touchData x=%4d y=%4d z=%2d\n", touchData.xValue, touchData.yValue, touchData.zValue);
     }
 
 #        ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
@@ -262,7 +262,7 @@ const pointing_device_driver_t pointing_device_driver = {
 report_mouse_t paw3204_get_report(report_mouse_t mouse_report) {
     report_paw3204_t data = paw3204_read();
     if (data.isMotion) {
-        pd_dprintf("Raw ] X: %d, Y: %d\n", data.x, data.y);
+        //pd_dprintf("Raw ] X: %d, Y: %d\n", data.x, data.y);
 
         mouse_report.x = data.x;
         mouse_report.y = data.y;
@@ -334,7 +334,7 @@ const pointing_device_driver_t pointing_device_driver = {
 };
 // clang-format on
 
-#elif defined(POINTING_DEVICE_DRIVER_pmw3360) || defined(POINTING_DEVICE_DRIVER_pmw3389)
+#elif defined(POINTING_DEVICE_DRIVER_pmw3360) || defined(POINTING_DEVICE_DRIVER_pmw3389) 
 static void pmw33xx_init_wrapper(void) {
     pmw33xx_init(0);
 }
@@ -362,7 +362,7 @@ report_mouse_t pmw33xx_get_report(report_mouse_t mouse_report) {
 
     if (!in_motion) {
         in_motion = true;
-        pd_dprintf("PWM3360 (0): starting motion\n");
+        //pd_dprintf("PWM3360 (0): starting motion\n");
     }
 
     mouse_report.x = CONSTRAIN_HID_XY(report.delta_x);

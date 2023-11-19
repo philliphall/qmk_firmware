@@ -6,7 +6,7 @@
 // Copyright 2020 Ploopy Corporation
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-#include "pmw33xx_common.h"
+#include "pmw3360_common.h"
 #include "progmem.h"
 
 uint16_t pmw33xx_get_cpi(uint8_t sensor) {

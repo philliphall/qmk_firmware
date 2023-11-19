@@ -33,7 +33,7 @@ enum layer_names {
 	_FN,
 	_NUM,
 	_GAME,
-    _MOUSE
+  _MOUSE
 };
 
 
@@ -62,6 +62,8 @@ bool caps_word_press_user(uint16_t keycode) {
             return false;  // Deactivate Caps Word.
     }
 }
+
+
 // *********************
 // Dynamic macro control
 // *********************
@@ -146,6 +148,7 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
 
         // Fancy supers
         else if (clockwise) {
+
             
             // Super backspace mode
             if (is_backspace_active) {
@@ -200,6 +203,7 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
 // Trackball control
 // *****************
 #ifdef POINTING_DEVICE_ENABLE
+
 
 // IInitialize custom trackball features
 #ifndef SCROLL_DIVISOR_H
@@ -588,8 +592,7 @@ void msu_debug_sensor_custom(void) {
         pmw33xx_write(0, REG_Observation, 0x00);
         //dprintf("SROM_ID: %u\n", pmw33xx_read(0, REG_SROM_ID));
         
-    }
-    
+    } 
 }
 
 

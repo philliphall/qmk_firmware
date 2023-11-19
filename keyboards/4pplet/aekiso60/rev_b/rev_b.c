@@ -1,5 +1,5 @@
 /*
-Copyright 2023 Jesse Estes (@jestes5111)
+Copyright 2022 Stefan Sundin "4pplet" <4pplet@protonmail.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -14,10 +14,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "rev_b.h"
 
-#pragma once
 
-#define EE_HANDS
-#define RGBLIGHT_SPLIT
-#define RGBLIGHT_SLEEP
-#define ENABLE_COMPILE_KEYCODE
