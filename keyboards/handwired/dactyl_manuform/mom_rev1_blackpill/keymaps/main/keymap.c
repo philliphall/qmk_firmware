@@ -33,7 +33,7 @@ enum layer_names {
 	_FN,
 	_NUM,
 	_GAME,
-  _MOUSE
+    _MOUSE
 };
 
 
@@ -62,12 +62,10 @@ bool caps_word_press_user(uint16_t keycode) {
             return false;  // Deactivate Caps Word.
     }
 }
-
-
 // *********************
 // Dynamic macro control
 // *********************
-#ifdef DYNAMIC_MACRO_ENABLE
+//#ifdef DYNAMIC_MACRO_ENABLE
 bool macro_1_recording = false;
 bool macro_2_recording = false;
 static bool macro_1_recorded = false;
@@ -98,13 +96,13 @@ void dynamic_macro_play_user(int8_t direction) {
         SEND_STRING(":-)");
     }
 }
-#endif // DYNAMIC_MACRO_ENABLE
+//#endif // DYNAMIC_MACRO_ENABLE
 
 
 // ***********
 // Encoder Use
 // ***********
-#ifdef ENCODER_ENABLE
+//#ifdef ENCODER_ENABLE
 
 // Super Encoder Timer
 uint16_t encoder_timeout = 900;
@@ -148,7 +146,6 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
 
         // Fancy supers
         else if (clockwise) {
-
             
             // Super backspace mode
             if (is_backspace_active) {
@@ -196,14 +193,13 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
     }
     return false;
 }
-#endif // ENCODER_ENABLE
+//#endif // ENCODER_ENABLE
 
 
 // *****************
 // Trackball control
 // *****************
-#ifdef POINTING_DEVICE_ENABLE
-
+//#ifdef POINTING_DEVICE_ENABLE
 
 // IInitialize custom trackball features
 #ifndef SCROLL_DIVISOR_H
@@ -370,13 +366,14 @@ float movement_accumulated_y = 0;
 
 // Manipulate mouse reports
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    
+    bool motionDebug = false;
+
     // Skip everything if there is no movement to manipulate
     if (mouse_report.x == 0 && mouse_report.y == 0) {
         return mouse_report;
     }
 
-    dprintf("Initial: %3d,%3d;  ", mouse_report.x, mouse_report.y);
+    if (motionDebug) {dprintf("Initial: %3d,%3d;  ", mouse_report.x, mouse_report.y);}
 
     // Precision Decelleration
     // Calculate and accumulate precise movement
@@ -385,7 +382,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     // Assign integer parts of accumulated movement values to the mouse report
     mouse_report.x = (int16_t)precision_accumulated_x;
     mouse_report.y = (int16_t)precision_accumulated_y;
-    dprintf("Decel: %3d,%3d;  ", mouse_report.x, mouse_report.y);
+    if (motionDebug) {dprintf("Decel: %3d,%3d;  ", mouse_report.x, mouse_report.y);}
     // Update accumulated movement values by subtracting the integer parts
     precision_accumulated_x -= (int16_t)precision_accumulated_x;
     precision_accumulated_y -= (int16_t)precision_accumulated_y;
@@ -407,7 +404,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         // Assign integer parts of accumulated scroll values to the mouse report
         mouse_report.h = (int16_t)scroll_accumulated_h;
         mouse_report.v = (int16_t)scroll_accumulated_v;
-        dprintf("Scroll: %3d,%3d;  ", mouse_report.h, mouse_report.v);
+        if (motionDebug) {dprintf("Scroll: %3d,%3d;  ", mouse_report.h, mouse_report.v);}
         // Update accumulated scroll values by subtracting the integer parts
         scroll_accumulated_h -= (int16_t)scroll_accumulated_h;
         scroll_accumulated_v -= (int16_t)scroll_accumulated_v;
@@ -424,7 +421,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         // Assign integer parts of accumulated movement values to the mouse report
         mouse_report.x = (int16_t)sniping_accumulated_x;
         mouse_report.y = (int16_t)sniping_accumulated_y;
-        dprintf("Prec: %3d,%3d;  ", mouse_report.x, mouse_report.y);
+        if (motionDebug) {dprintf("Prec: %3d,%3d;  ", mouse_report.x, mouse_report.y);}
         // Update accumulated movement values by subtracting the integer parts
         sniping_accumulated_x -= (int16_t)sniping_accumulated_x;
         sniping_accumulated_y -= (int16_t)sniping_accumulated_y;
@@ -436,22 +433,22 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     // Assign integer parts of accumulated movement values to the mouse report
     mouse_report.x = (int16_t)movement_accumulated_x;
     mouse_report.y = (int16_t)movement_accumulated_y;
-    dprintf("Sens: %3d,%3d;  ", mouse_report.x, mouse_report.y);
+    if (motionDebug) {dprintf("Sens: %3d,%3d;  ", mouse_report.x, mouse_report.y);}
     // Update accumulated movement values by subtracting the integer parts
     movement_accumulated_x -= (int16_t)movement_accumulated_x;
     movement_accumulated_y -= (int16_t)movement_accumulated_y;
     
     // DONE
-    dprintf("Final: %3d,%3d\n", mouse_report.x, mouse_report.y);
+    if (motionDebug) {dprintf("Final: %3d,%3d\n", mouse_report.x, mouse_report.y);}
     return mouse_report;
 }
-#endif // POINTING_DEVICE_ENABLE
+//#endif // POINTING_DEVICE_ENABLE
 
 
 // ************
 // OLED Control
 // ************
-#ifdef OLED_ENABLE
+//#ifdef OLED_ENABLE
 
 // Set up the OLED
 static bool oled_logo_on = true;
@@ -523,7 +520,7 @@ bool oled_task_user(void) {
         }
         
         // Macro Recording
-        #ifdef DYNAMIC_MACRO_ENABLE
+        //#ifdef DYNAMIC_MACRO_ENABLE
         if (macro_1_recording && macro_2_recording) {
             oled_write_P(PSTR("MACROS BOTH RECORDING\n"), false);
             // oled_write_P(PSTR("       WOW!\n"), false);
@@ -534,16 +531,16 @@ bool oled_task_user(void) {
         else if (macro_2_recording) {
             oled_write_P(PSTR("MACRO 2 RECORDING\n"), false);
         }
-        #endif // DYNAMIC_MACRO_ENABLE
+        //#endif // DYNAMIC_MACRO_ENABLE
 
         // Trackball DPI Reporting
-        #ifdef POINTING_DEVICE_ENABLE
+        //#ifdef POINTING_DEVICE_ENABLE
         oled_write_P(PSTR("DPI:"), false);
         oled_write_P(PSTR(get_u16_str(current_dpi, ' ')), false);
         oled_write_P(PSTR(" SEN:"), false);
         oled_write_P(PSTR(get_u16_str((uint16_t)current_sen / 10, ' ')), false);
         oled_write_P(PSTR("\n"), false);
-        #endif
+        //#endif
         
         // Host Keyboard LED Status (mostly)
         led_t led_state = host_keyboard_led_state();
@@ -563,7 +560,7 @@ bool oled_task_user(void) {
     }
     return false;
 }
-#endif // OLED_ENABLE
+//#endif // OLED_ENABLE
 
 
 // custom function for temporary sensor troubleshooting
@@ -573,26 +570,34 @@ uint8_t squal_found = 0x00;
 uint16_t squal_frequency = 1000;
 uint16_t squal_timer = 0;
 void kpiu_squal_timer(void) { squal_timer = timer_read(); } // To be executed in keyboard_post_init_user.
+uint16_t reinit_timer= 0; 
+void kpiu_reinit_timer(void) { reinit_timer = timer_read(); } // To be executed in keyboard_post_init_user.
 uint8_t observation_found = 0x00;
 
 void msu_debug_sensor_custom(void) {
     
     // Motion
-/*     motion_found = pmw33xx_read(0, REG_Motion);
-    if (motion_found != motion_stored) {
-        dprintf("Motion bit has been set to %x.\n", motion_found);
-        motion_stored = motion_found;
-    } */
+    
+    // motion_found = pmw33xx_read(0, REG_Motion);
+    // if (motion_found != motion_stored) {
+    //     dprintf("Motion bit has been set to %x.\n", motion_found);
+    //     motion_stored = motion_found;
+    // }
 
     // Squal - (measures quality of image capture)
     if (timer_elapsed(squal_timer) > squal_frequency) {
         squal_timer = timer_read(); 
         dprintf("Squal features: %4d; Thresh: %02x; SROM Observation: %02x; SROM_ID: %02x; CPI Read: %5d\n", pmw33xx_read(0, REG_SQUAL) * 8, pmw33xx_read(0, REG_Min_SQ_Run), pmw33xx_read(0, REG_Observation), pmw33xx_read(0, REG_SROM_ID), pointing_device_get_cpi());
-        //dprintf("Observation value: %s\n", pmw33xx_read(0, REG_Observation) && 0x20 ? "SROM Running" : "Not running");
         pmw33xx_write(0, REG_Observation, 0x00);
         //dprintf("SROM_ID: %u\n", pmw33xx_read(0, REG_SROM_ID));
         
-    } 
+    }
+
+    // if (timer_elapsed(reinit_timer) > 15000) {
+    //     reinit_timer = timer_read();
+    //     pmw33xx_init(0);
+    // }
+    
 }
 
 
@@ -604,13 +609,14 @@ void matrix_scan_user(void) {
 
 void keyboard_post_init_user(void) {
     // Debug levels
-    debug_enable = false;
+    debug_enable = true;
     debug_matrix = false;
     debug_keyboard = false;
     debug_mouse = false;
     
     kpiu_oled_timer();
     kpiu_squal_timer(); 
+    kpiu_reinit_timer();
 }
 
 void pointing_device_init_user(void) { 

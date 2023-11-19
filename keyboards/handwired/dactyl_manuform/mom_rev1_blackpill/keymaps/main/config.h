@@ -20,4 +20,3 @@
 #define SEN_DECREMENT 66      // Percent to multiply by when decreasing Sensitivity
 #define DECEL_WIDTH 70        // Width of precision deceleration curve 1-255 (0 breaks the pointer)
 #define DECEL_STRENGTH 23     // Deceleration factor (higher is more extreme) 0-255
-
