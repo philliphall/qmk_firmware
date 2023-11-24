@@ -16,15 +16,18 @@
 #define SPLIT_LED_STATE_ENABLE     // This enables syncing of the Host LED status (caps lock, num lock, etc) between both halves of the split keyboard. The main purpose of this feature is to enable support for use of things like OLED display of the Host LED status.
 
 // LIGHTING
-/* #define RGB_DI_PIN A1
+#define WS2812_DI_PIN A1
 #define RGBLED_NUM 30
 #define RGBLIGHT_SPLIT
 #define RGBLED_SPLIT { 15, 15 }
-#define RGBLIGHT_LIMIT_VAL 255
+#define RGBLIGHT_LIMIT_VAL 120
 #define RGBLIGHT_SLEEP
 #define RGBLIGHT_EFFECT_BREATHING
 #define RGBLIGHT_EFFECT_RAINBOW_MOOD
-#define RGBLIGHT_EFFECT_RGB_TEST */
+#define RGBLIGHT_EFFECT_RGB_TEST
+#define RGBLIGHT_MODE_SNAKE
+#define RGBLIGHT_MODE_STATIC_GRADIENT
+#define RGBLIGHT_MODE_TWINKLE
 
 /* I2C config for oleds */
 #define I2C_DRIVER        I2CD1 //  I2CDn must correspond with mcuconf.h STM32_I2C_USE_I2Cn
