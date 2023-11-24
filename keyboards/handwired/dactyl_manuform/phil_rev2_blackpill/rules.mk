@@ -16,3 +16,4 @@ DYNAMIC_MACRO_ENABLE = yes
 SERIAL_DRIVER = usart
 POINTING_DEVICE_ENABLE = yes
 POINTING_DEVICE_DRIVER = pmw3360
+NO_SUSPEND_POWER_DOWN = yes # Because the blackpill seems to have an issue resuming from sleep

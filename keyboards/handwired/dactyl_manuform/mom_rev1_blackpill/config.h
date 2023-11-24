@@ -28,6 +28,7 @@
 #define RGBLIGHT_MODE_SNAKE
 #define RGBLIGHT_MODE_STATIC_GRADIENT
 #define RGBLIGHT_MODE_TWINKLE
+#define RGBLIGHT_DEFAULT_MODE 7
 
 /* I2C config for oleds */
 #define I2C_DRIVER        I2CD1 //  I2CDn must correspond with mcuconf.h STM32_I2C_USE_I2Cn

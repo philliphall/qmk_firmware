@@ -535,11 +535,11 @@ bool oled_task_user(void) {
 
         // Trackball DPI Reporting
         //#ifdef POINTING_DEVICE_ENABLE
-        oled_write_P(PSTR("DPI:"), false);
+/*         oled_write_P(PSTR("DPI:"), false);
         oled_write_P(PSTR(get_u16_str(current_dpi, ' ')), false);
         oled_write_P(PSTR(" SEN:"), false);
         oled_write_P(PSTR(get_u16_str((uint16_t)current_sen / 10, ' ')), false);
-        oled_write_P(PSTR("\n"), false);
+        oled_write_P(PSTR("\n"), false); */
         //#endif
         
         // Host Keyboard LED Status (mostly)
