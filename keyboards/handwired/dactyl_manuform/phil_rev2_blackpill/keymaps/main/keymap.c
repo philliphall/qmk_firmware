@@ -338,6 +338,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 }
 
 // Customize Auto Mouse to treat back and forward browser buttons as mouse keys
+#ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
 bool is_mouse_record_user(uint16_t keycode, keyrecord_t* record) {
     switch(keycode) {
         case KC_WBAK:
@@ -349,7 +350,7 @@ bool is_mouse_record_user(uint16_t keycode, keyrecord_t* record) {
     }
     return false;
 }
-
+#endif
 
 // Decel Algorithm
 float decel(int16_t d) {
@@ -630,7 +631,9 @@ void pointing_device_init_user(void) {
     //pointing_device_set_cpi(user_config.dpi); # moved to kpiu
     //init_dpi = pointing_device_get_cpi();
 
+    #ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
     //set_auto_mouse_layer(<mouse_layer>); // only required if AUTO_MOUSE_DEFAULT_LAYER is not set to index of <mouse_layer>
     set_auto_mouse_enable(true);         // always required before the auto mouse feature will work
+    #endif
 
 }

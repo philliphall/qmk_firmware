@@ -5,8 +5,8 @@ enum my_keycodes {
   DPI_DEC,
   SEN_INC,
   SEN_DEC,
-  DW_DEC, 
-  DW_INC, 
+  DW_DEC,
+  DW_INC,
   DECEL_DEC,
   DECEL_INC
 };
@@ -27,7 +27,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #endif // defined(ENCODER_ENABLE) && defined(ENCODER_MAP_ENABLE)
 
 // Layer names for each layer
-enum layer_names { 
+enum layer_names {
 	_QWERTY,
 	_COLEMAK,
 	_FN,
@@ -41,7 +41,7 @@ enum layer_names {
 // Customize Caps Word
 // *******************
 // This is copied from the default documented here: https://github.com/qmk/qmk_firmware/blob/master/docs/feature_caps_word.md
-// All I really want is to stop the - key from being shifted. Drives me nuts. 
+// All I really want is to stop the - key from being shifted. Drives me nuts.
 bool caps_word_press_user(uint16_t keycode) {
     switch (keycode) {
         // Keycodes that continue Caps Word, with shift applied.
@@ -130,15 +130,15 @@ void msu_encoder_super_timer(void) { // To be executed in matrix_scan_user.
  *
  * The index parameter tells you which encoder was turned. If you only have
  * one encoder, the index will always be zero.
- * 
+ *
  * The clockwise parameter tells you the direction of the encoder. It'll be
  * true when you turned the encoder clockwise, and false otherwise.
  */
 bool encoder_update_user(uint8_t index, bool clockwise) {
-    
+
     // First encoder - Super alt-tab and super-backspace
-    if (index == 0) { 
-        
+    if (index == 0) {
+
         // In _FN Layer, volume
         if (layer_state_is(_FN)) {
             (clockwise) ? tap_code16(KC_AUDIO_VOL_UP) : tap_code16(KC_AUDIO_VOL_DOWN);
@@ -146,15 +146,15 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
 
         // Fancy supers
         else if (clockwise) {
-            
+
             // Super backspace mode
             if (is_backspace_active) {
                 tap_code16(C(KC_Z)); // Undo
             }
-            
+
             // Super alt-tab mode
             else if (is_alt_tab_active) {
-                tap_code16(KC_TAB);               
+                tap_code16(KC_TAB);
             }
 
             // Otherwise activate super alt-tab mode
@@ -163,9 +163,9 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
                 register_code(KC_LALT);
                 tap_code16(KC_TAB);
             }
-        } 
+        }
         else { // Counterclockwise
-            
+
             // Super alt-tab mode
             if (is_alt_tab_active) {
                 tap_code16(S(KC_TAB)); // Alt is already registered
@@ -180,13 +180,13 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
 
         // Update the timer regardless of which direction the encoder was turned or what mode we are in
         encoder_timer = timer_read();
-    } 
-    
+    }
+
     // Second encoder - ctrl-tab
     else if (index == 1) {
         if (clockwise) {
             tap_code16(C(KC_TAB));
-        } 
+        }
         else {
             tap_code16(S(C(KC_TAB)));
         }
@@ -230,7 +230,7 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
 #define SEN_DECREMENT 66      // Percent to multiply by when decreasing Sensitivity
 #endif
 #ifndef DECEL_WIDTH
-#define DECEL_WIDTH 40        // Width of precision deceleration curve 
+#define DECEL_WIDTH 40        // Width of precision deceleration curve
 #endif
 #ifndef DECEL_STRENGTH
 #define DECEL_STRENGTH 20     // Deceleration factor (higher is more extreme)
@@ -242,15 +242,15 @@ uint16_t detected_dpi = 1;
 bool reported = false;
 uint16_t current_sen = SEN_INITIAL;
 uint8_t  current_decel_width = DECEL_WIDTH;
-uint8_t  current_decel_strength = DECEL_STRENGTH; 
+uint8_t  current_decel_strength = DECEL_STRENGTH;
 // Some of the variables above are initiated at pointing_device_init_user defined near the bottom of this file.
 
 #include <math.h> // Needed for the floor, fmin, and fmax functions below
 
-// Custom keycodes for mouse functions 
+// Custom keycodes for mouse functions
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
-              
+
         // DPI / CPI - affects how the trackball sensor tracks/reports motion
         case DPI_INC:
             if (record->event.pressed) {
@@ -259,13 +259,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                     reported = true;
                 }
                 detected_dpi = pointing_device_get_cpi();
-                wait_ms(50); 
+                wait_ms(50);
                 dprintf("DPI_INC was pressed. Original DPI configured: %u. Original DPI detected: %u\n", current_dpi, detected_dpi);
                 current_dpi = fmin(PMW33XX_CPI_MAX, floor(((current_dpi * DPI_INCREMENT / 100) / PMW33XX_CPI_STEP) + 0.5) * PMW33XX_CPI_STEP);
                 pointing_device_set_cpi(current_dpi);
-                wait_ms(50); 
+                wait_ms(50);
                 detected_dpi = pointing_device_get_cpi();
-                wait_ms(50); 
+                wait_ms(50);
                 dprintf("New DPI configured: %u. New DPI detected: %u\n", current_dpi, detected_dpi);
             }
             return false;
@@ -277,7 +277,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 pointing_device_set_cpi(current_dpi);
             }
             return false;
-        
+
         // Sensitivity - mathematically adjust how sensitive we are to what the sensor reports
         case SEN_INC:
             if (record->event.pressed) {
@@ -293,7 +293,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 dprintf("New SEN: %u.\n", current_sen);
             }
             return false;
-        
+
         // Width of the decel curve... IE do only super slow movements track more precise, or do some medium movements get reduced sensitivity as well?
         case DW_DEC:
               if (record->event.pressed) {
@@ -301,15 +301,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 current_decel_width -= 1;
                 dprintf("New Decel Width: %u.\n", current_decel_width);
             }
-            return false;    
+            return false;
         case DW_INC:
               if (record->event.pressed) {
                 dprintf("DW_INC was pressed. Original Decel Width: %u.\n", current_decel_width);
                 current_decel_width += 1;
                 dprintf("New Decel Width: %u.\n", current_decel_width);
             }
-            return false;      
-        
+            return false;
+
         // How significantly should cursor movement be desensitized when trying to move the trackball slowly?
         case DECEL_DEC:
               if (record->event.pressed) {
@@ -317,19 +317,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 current_decel_strength -= 1;
                 dprintf("New Decel Strength: %u.\n", current_decel_strength);
             }
-            return false;    
+            return false;
         case DECEL_INC:
               if (record->event.pressed) {
                 dprintf("DECEL_INC was pressed. Original Decel Strength: %u.\n", current_decel_strength);
                 current_decel_strength += 1;
                 dprintf("New Decel Strength: %u.\n", current_decel_strength);
             }
-            return false;    
+            return false;
     }
     return true; // Normal handling for all other keycodes not returned above.
 }
 
 // Customize Auto Mouse to treat back and forward browser buttons as mouse keys
+#ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
 bool is_mouse_record_user(uint16_t keycode, keyrecord_t* record) {
     switch(keycode) {
         case KC_WBAK:
@@ -341,7 +342,7 @@ bool is_mouse_record_user(uint16_t keycode, keyrecord_t* record) {
     }
     return false;
 }
-
+#endif
 
 // Decel Algorithm
 float decel(int16_t d) {
@@ -360,9 +361,9 @@ float precision_accumulated_y = 0;
 float scroll_accumulated_h = 0;
 float scroll_accumulated_v = 0;
 float sniping_accumulated_x = 0;
-float sniping_accumulated_y = 0; 
+float sniping_accumulated_y = 0;
 float movement_accumulated_x = 0;
-float movement_accumulated_y = 0; 
+float movement_accumulated_y = 0;
 
 // Manipulate mouse reports
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
@@ -393,14 +394,14 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         // Calculate and accumulate scroll values based on mouse movement and divisors
         #ifdef POINTING_DEVICE_INVERT_Y
             scroll_accumulated_v -= (float)mouse_report.y / SCROLL_DIVISOR_V;
-        #else     
+        #else
             scroll_accumulated_v += (float)mouse_report.y / SCROLL_DIVISOR_V;
         #endif // POINTING_DEVICE_INVERT_Y
         #ifdef POINTING_DEVICE_INVERT_X
             scroll_accumulated_h -= (float)mouse_report.x / SCROLL_DIVISOR_H;
         #else
             scroll_accumulated_h += (float)mouse_report.x / SCROLL_DIVISOR_H;
-        #endif // POINTING_DEVICE_INVERT_X 
+        #endif // POINTING_DEVICE_INVERT_X
         // Assign integer parts of accumulated scroll values to the mouse report
         mouse_report.h = (int16_t)scroll_accumulated_h;
         mouse_report.v = (int16_t)scroll_accumulated_v;
@@ -429,7 +430,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
     // Sensitivity Multiplier
     movement_accumulated_x += (float)mouse_report.x * current_sen / 1000;
-    movement_accumulated_y += (float)mouse_report.y * current_sen / 1000;    
+    movement_accumulated_y += (float)mouse_report.y * current_sen / 1000;
     // Assign integer parts of accumulated movement values to the mouse report
     mouse_report.x = (int16_t)movement_accumulated_x;
     mouse_report.y = (int16_t)movement_accumulated_y;
@@ -437,7 +438,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     // Update accumulated movement values by subtracting the integer parts
     movement_accumulated_x -= (int16_t)movement_accumulated_x;
     movement_accumulated_y -= (int16_t)movement_accumulated_y;
-    
+
     // DONE
     if (motionDebug) {dprintf("Final: %3d,%3d\n", mouse_report.x, mouse_report.y);}
     return mouse_report;
@@ -452,7 +453,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
 // Set up the OLED
 static bool oled_logo_on = true;
-oled_rotation_t oled_init_user(oled_rotation_t rotation) { 
+oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     return OLED_ROTATION_180;
 }
 
@@ -472,7 +473,7 @@ static void render_logo(void) {
 
 // Runtime
 bool oled_task_user(void) {
-    
+
     // Logo on boot
     if (timer_elapsed32(oled_logo_timer) < 2000 && oled_logo_on == true) {
         oled_set_brightness(255);
@@ -483,7 +484,7 @@ bool oled_task_user(void) {
         oled_set_brightness(32);
         render_logo();
     }
-    
+
     // Host Keyboard Layer Status
     else {
         if (oled_logo_on) {
@@ -499,7 +500,7 @@ bool oled_task_user(void) {
             case _QWERTY:
                 oled_write_P(PSTR("Default\n"), false);
                 break;
-            case _COLEMAK: 
+            case _COLEMAK:
                 oled_write_P(PSTR("Colemak\n"), false);
                 break;
             case _FN:
@@ -518,7 +519,7 @@ bool oled_task_user(void) {
                 oled_write_P(PSTR("Undefined\n"), false);
                 break;
         }
-        
+
         // Macro Recording
         //#ifdef DYNAMIC_MACRO_ENABLE
         if (macro_1_recording && macro_2_recording) {
@@ -541,7 +542,7 @@ bool oled_task_user(void) {
         oled_write_P(PSTR(get_u16_str((uint16_t)current_sen / 10, ' ')), false);
         oled_write_P(PSTR("\n"), false); */
         //#endif
-        
+
         // Host Keyboard LED Status (mostly)
         led_t led_state = host_keyboard_led_state();
         if (!led_state.num_lock) {
@@ -566,18 +567,18 @@ bool oled_task_user(void) {
 // custom function for temporary sensor troubleshooting
 uint8_t motion_found = 0x00;
 uint8_t motion_stored = 0x00;
-uint8_t squal_found = 0x00; 
+uint8_t squal_found = 0x00;
 uint16_t squal_frequency = 1000;
 uint16_t squal_timer = 0;
 void kpiu_squal_timer(void) { squal_timer = timer_read(); } // To be executed in keyboard_post_init_user.
-uint16_t reinit_timer= 0; 
+uint16_t reinit_timer= 0;
 void kpiu_reinit_timer(void) { reinit_timer = timer_read(); } // To be executed in keyboard_post_init_user.
 uint8_t observation_found = 0x00;
 
 void msu_debug_sensor_custom(void) {
-    
+
     // Motion
-    
+
     // motion_found = pmw33xx_read(0, REG_Motion);
     // if (motion_found != motion_stored) {
     //     dprintf("Motion bit has been set to %x.\n", motion_found);
@@ -586,18 +587,18 @@ void msu_debug_sensor_custom(void) {
 
     // Squal - (measures quality of image capture)
     if (timer_elapsed(squal_timer) > squal_frequency) {
-        squal_timer = timer_read(); 
+        squal_timer = timer_read();
         dprintf("Squal features: %4d; Thresh: %02x; SROM Observation: %02x; SROM_ID: %02x; CPI Read: %5d\n", pmw33xx_read(0, REG_SQUAL) * 8, pmw33xx_read(0, REG_Min_SQ_Run), pmw33xx_read(0, REG_Observation), pmw33xx_read(0, REG_SROM_ID), pointing_device_get_cpi());
         pmw33xx_write(0, REG_Observation, 0x00);
         //dprintf("SROM_ID: %u\n", pmw33xx_read(0, REG_SROM_ID));
-        
+
     }
 
     // if (timer_elapsed(reinit_timer) > 15000) {
     //     reinit_timer = timer_read();
     //     pmw33xx_init(0);
     // }
-    
+
 }
 
 
@@ -613,18 +614,20 @@ void keyboard_post_init_user(void) {
     debug_matrix = false;
     debug_keyboard = false;
     debug_mouse = false;
-    
+
     kpiu_oled_timer();
-    kpiu_squal_timer(); 
+    kpiu_squal_timer();
     kpiu_reinit_timer();
 }
 
-void pointing_device_init_user(void) { 
+void pointing_device_init_user(void) {
     first_dpi = pointing_device_get_cpi();
     pointing_device_set_cpi(current_dpi);
     init_dpi = pointing_device_get_cpi();
-    
+
+    #ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
     //set_auto_mouse_layer(<mouse_layer>); // only required if AUTO_MOUSE_DEFAULT_LAYER is not set to index of <mouse_layer>
     set_auto_mouse_enable(true);         // always required before the auto mouse feature will work
+    #endif
 
 }
