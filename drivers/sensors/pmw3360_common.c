@@ -9,7 +9,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "pointing_device_internal.h"
-#include "pmw33xx_common.h"
+#include "pmw3360_common.h"
 #include "string.h"
 #include "wait.h"
 #include "spi_master.h"
