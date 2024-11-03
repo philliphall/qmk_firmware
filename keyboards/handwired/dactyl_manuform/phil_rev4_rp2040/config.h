@@ -1,6 +1,6 @@
 // This is how the MCU will know which hand it is.
-#define SPLIT_HAND_PIN GP29
-#define SPLIT_HAND_PIN_LOW_IS_RIGHT // I think this is default, but useful for a reminder!
+#define SPLIT_HAND_PIN GP29         // By default, if it's high, then the controller assumes it is the left hand, and if it's low, it's assumed to be the right side.
+// #define SPLIT_HAND_PIN_LOW_IS_LEFT // Uncomment to reverse behavior
 
 // Split Communication
 #define SERIAL_USART_FULL_DUPLEX   // Enable full duplex operation mode.
@@ -61,4 +61,6 @@
 #define SNIPING_DIVISOR 10    // When in sniping mode, how much slower should the cursor move?
 
 // EEPROM virtualized size
-#define EECONFIG_USER_DATA_SIZE 64
+#define PICO_FLASH_SIZE_BYTES (16 * 1024 * 1024)
+#define WEAR_LEVELING_BACKING_SIZE 65536 // Because I have tons of space. This 64kb backing would by default mean a virtualized EEPROM of 32kb.
+#define WEAR_LEVELING_LOGICAL_SIZE ((WEAR_LEVELING_BACKING_SIZE) / 8) // 8kb is PLENTY. My use really only involves eeconfig, which only allows 32 BYTES of read/write at a time

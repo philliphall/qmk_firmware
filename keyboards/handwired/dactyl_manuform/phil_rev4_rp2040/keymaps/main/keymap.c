@@ -31,22 +31,19 @@ enum layer_names {
   _MOUSE
 };
 
-// Because the Blackpill has issues resuming currently.
-void suspend_wakeup_init_user(void) {    NVIC_SystemReset();}
-
 
 // ***********************************
 // Persistence using vitualized EEPROM
 // ***********************************
 typedef union {
-    uint64_t raw;
+    uint32_t raw;
     struct {
         uint16_t dpi              : 16;
         uint16_t sen              : 16;
         uint8_t  decel_width      : 8;
         uint8_t  decel_strength   : 8;
-        uint8_t  scroll_divisor_h : 8;
-        uint8_t  scroll_divisor_v : 8;
+        //uint8_t  scroll_divisor_h : 8;
+        //uint8_t  scroll_divisor_v : 8;
     };
 } user_config_t;
 user_config_t user_config;
@@ -59,18 +56,18 @@ void eeconfig_init_user_datablock(void) {  // EEPROM is getting reset!
     user_config.sen = SEN_INITIAL;
     user_config.decel_width = DECEL_WIDTH;
     user_config.decel_strength = DECEL_STRENGTH;
-    user_config.scroll_divisor_h = SCROLL_DIVISOR_H; // user update not yet implemented
-    user_config.scroll_divisor_v = SCROLL_DIVISOR_V; // user update not yet implemented
-    dprintf("Configuration value now %llu. Writing to EEPROM.\n", user_config.raw);
-    eeconfig_update_user_datablock(&user_config.raw); // Write default value to EEPROM now
+    //user_config.scroll_divisor_h = SCROLL_DIVISOR_H; // user update not yet implemented
+    //user_config.scroll_divisor_v = SCROLL_DIVISOR_V; // user update not yet implemented
+    dprintf("Configuration value now %lu. Writing to EEPROM.\n", user_config.raw);
+    eeconfig_update_user(user_config.raw); // Write default value to EEPROM now
 }
 
 // Read config on init
 void kpiu_read_config_from_eeprom(void) {
-    dprintf("Initializing from EEPROM. Initial value of user_config: %llu\n", user_config.raw);
-    eeconfig_read_user_datablock(&user_config.raw);
+    dprintf("Initializing from EEPROM. Initial value of user_config: %lu\n", user_config.raw);
+    user_config.raw = eeconfig_read_user();
     pointing_device_set_cpi(user_config.dpi);
-    dprintf("                                             New value: %llu\n", user_config.raw);
+    dprintf("                                             New value: %lu\n", user_config.raw);
 }
 
 
@@ -109,15 +106,16 @@ bool macro_1_recording = false;
 bool macro_2_recording = false;
 static bool macro_1_recorded = false;
 static bool macro_2_recorded = false;
-void dynamic_macro_record_start_user(int8_t direction) {
+bool dynamic_macro_record_start_user(int8_t direction) {
     if (direction == 1) {
         macro_1_recording = true;
     }
     else if (direction == -1) {
         macro_2_recording = true;
     }
+    return true;
 }
-void dynamic_macro_record_end_user(int8_t direction) {
+bool dynamic_macro_record_end_user(int8_t direction) {
     if (direction == 1) {
         macro_1_recording = false;
         macro_1_recorded = true;
@@ -126,14 +124,16 @@ void dynamic_macro_record_end_user(int8_t direction) {
         macro_2_recording = false;
         macro_2_recorded = true;
     }
+    return true;
 }
-void dynamic_macro_play_user(int8_t direction) {
+bool dynamic_macro_play_user(int8_t direction) {
     if (direction == 1 && macro_1_recorded == false) {
         SEND_STRING(SS_TAP(X_SPACE) SS_DELAY(10) SS_TAP(X_DOWN) SS_DELAY(10) SS_TAP(X_DOWN) SS_DELAY(10) SS_TAP(X_RIGHT) SS_DELAY(10) SS_TAP(X_SPACE));
     }
     else if (direction == -1 && macro_2_recorded == false) {
         SEND_STRING(":-)");
     }
+    return true;
 }
 #endif // DYNAMIC_MACRO_ENABLE
 
@@ -330,7 +330,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case EE_SAVE:
             if (record->event.pressed) {
                 dprintf("EE_SAVE was pressed. Writing to virtualized EEPROM.\n");
-                eeconfig_update_user_datablock(&user_config.raw);
+                eeconfig_update_user(user_config.raw);
             }
             return false;
     }
@@ -401,14 +401,14 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     if (layer_state_is(_FN)) {
         // Calculate and accumulate scroll values based on mouse movement and divisors
         #ifdef POINTING_DEVICE_INVERT_Y
-            scroll_accumulated_v -= (float)mouse_report.y / user_config.scroll_divisor_v;
+            scroll_accumulated_v -= (float)mouse_report.y / SCROLL_DIVISOR_V;
         #else
-            scroll_accumulated_v += (float)mouse_report.y / user_config.scroll_divisor_v;
+            scroll_accumulated_v += (float)mouse_report.y / SCROLL_DIVISOR_V;
         #endif // POINTING_DEVICE_INVERT_Y
         #ifdef POINTING_DEVICE_INVERT_X
-            scroll_accumulated_h -= (float)mouse_report.x / user_config.scroll_divisor_h;
+            scroll_accumulated_h -= (float)mouse_report.x / SCROLL_DIVISOR_H;
         #else
-            scroll_accumulated_h += (float)mouse_report.x / user_config.scroll_divisor_h;
+            scroll_accumulated_h += (float)mouse_report.x / SCROLL_DIVISOR_H;
         #endif // POINTING_DEVICE_INVERT_X
         // Assign integer parts of accumulated scroll values to the mouse report
         mouse_report.h = (int16_t)scroll_accumulated_h;
@@ -597,7 +597,6 @@ void msu_debug_sensor_custom(void) {
         //dprintf("Observation value: %s\n", pmw33xx_read(0, REG_Observation) && 0x20 ? "SROM Running" : "Not running");
         pmw33xx_write(0, REG_Observation, 0x00);
         //dprintf("SROM_ID: %u\n", pmw33xx_read(0, REG_SROM_ID));
-
     }
 }
 

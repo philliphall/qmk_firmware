@@ -13,9 +13,6 @@
         "rows": ["GP16", "GP17", "GP18", "GP19", "GP20", "GP21"]
     },
     "diode_direction": "COL2ROW",
-    "development_board": "kb2040",
-    "processor": "RP2040",
-    "bootloader": "rp2040",
     "split": {
         "enabled": true
     },
