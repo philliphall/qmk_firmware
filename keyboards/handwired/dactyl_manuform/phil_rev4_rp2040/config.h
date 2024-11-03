@@ -27,7 +27,7 @@
 #define OLED_UPDATE_INTERVAL 100
 
 // SPI config for trackball sensor
-#define SPI_DRIVER SPID0
+#define SPI_DRIVER SPID1
 #define SPI_SCK_PIN GP10
 #define SPI_MOSI_PIN GP11
 #define SPI_MISO_PIN GP12
@@ -39,8 +39,7 @@
 #define SPLIT_POINTING_ENABLE
 #define POINTING_DEVICE_RIGHT
 #define POINTING_DEVICE_INVERT_Y
-#define POINTING_DEVICE_TASK_THROTTLE_MS 1
-//#define POINTING_DEVICE_DEBUG
+// #define POINTING_DEVICE_DEBUG
 
 // Used for checksums of mouse report transactions across split
 #define CRC8_USE_TABLE
