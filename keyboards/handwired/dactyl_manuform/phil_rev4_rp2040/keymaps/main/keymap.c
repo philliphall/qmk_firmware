@@ -9,16 +9,18 @@ enum my_keycodes {
   DW_DEC,
   DECEL_INC,
   DECEL_DEC,
-  EE_SAVE
+  EE_SAVE,
+  EE_LOAD,
+  EE_INIT
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-	[0] = LAYOUT_5x7(KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_LBRC, CW_TOGG, KC_A, KC_S, KC_D, KC_F, KC_G, KC_LPRN, KC_LSFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_LCTL, KC_LGUI, KC_LEFT, KC_RGHT, KC_LSFT, LT(3,KC_DEL), KC_LCTL, KC_LALT, KC_ENT, DM_PLY1, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL, KC_GRV, KC_RBRC, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_BSLS, KC_RPRN, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT, KC_BTN1, KC_BTN2, KC_PSCR, LGUI(KC_L), LT(2,KC_ENT), KC_SPC, KC_INS, MO(2), DM_PLY2, KC_WREF),
-	[1] = LAYOUT_5x7(KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_TAB, KC_Q, KC_W, KC_F, KC_P, KC_B, KC_LBRC, CW_TOGG, KC_A, KC_R, KC_S, KC_T, KC_G, KC_LPRN, KC_LSFT, KC_Z, KC_X, KC_C, KC_D, KC_V, KC_LCTL, KC_LGUI, KC_LEFT, KC_RGHT, KC_LSFT, LT(3,KC_DEL), KC_LCTL, KC_LALT, KC_ENT, DM_PLY1, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL, KC_GRV, KC_RBRC, KC_J, KC_L, KC_U, KC_Y, KC_SCLN, KC_BSLS, KC_RPRN, KC_M, KC_N, KC_E, KC_I, KC_O, KC_QUOT, KC_K, KC_H, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT, KC_BTN1, KC_BTN2, KC_PSCR, LGUI(KC_L), LT(2,KC_ENT), KC_SPC, KC_INS, MO(2), DM_PLY2, KC_WREF),
-	[2] = LAYOUT_5x7(KC_TRNS, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, EE_SAVE, KC_ACL1, KC_ACL2, KC_MS_U, KC_TRNS, KC_BRIU, TO(4), DW_DEC, DW_INC, KC_MS_L, KC_MS_D, KC_MS_R, KC_BRID, DF(0), DECEL_DEC, DECEL_INC, DPI_DEC, DPI_INC, SEN_DEC, SEN_INC, KC_MSTP, KC_MPLY, KC_MPRV, KC_MNXT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, DM_REC1, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, DB_TOGG, TO(3), LCTL(KC_BSPC), KC_BSPC, KC_UP, KC_DEL, LCTL(KC_DEL), EE_CLR, DF(1), LCTL(KC_LEFT), KC_LEFT, KC_DOWN, KC_RGHT, LCTL(KC_RGHT), KC_ACL0, KC_PGUP, KC_HOME, KC_DOWN, KC_END, KC_PGDN, KC_TRNS, KC_BTN1, KC_BTN2, KC_MUTE, QK_BOOT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, DM_REC2, KC_TRNS),
-	[3] = LAYOUT_5x7(KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, QK_BOOT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_NUM, KC_CALC, LSFT(KC_5), KC_PSLS, KC_PMNS, KC_EQL, KC_TRNS, KC_TRNS, KC_LPRN, KC_7, KC_8, KC_9, KC_PAST, KC_TRNS, KC_TRNS, KC_RPRN, KC_4, KC_5, KC_6, KC_PPLS, KC_TRNS, KC_COLN, KC_1, KC_2, KC_3, KC_ENT, KC_TRNS, KC_BTN1, KC_PDOT, KC_COMM, TO(0), KC_TRNS, KC_0, LSFT(KC_4), LSFT(KC_5), KC_TRNS, KC_TRNS),
-	[4] = LAYOUT_5x7(KC_TRNS, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_TRNS, KC_CAPS, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_TRNS, KC_LSFT, KC_A, KC_S, KC_D, KC_F, KC_G, KC_TRNS, KC_LCTL, KC_Z, KC_X, KC_C, KC_V, KC_LCTL, KC_NO, KC_I, KC_M, KC_SPC, KC_ESC, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, TO(0), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
-	[5] = LAYOUT_5x7(KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_BTN1, MO(2), KC_BTN2, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_BTN1, KC_BTN2, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS)
+    [0] = LAYOUT_5x7(KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_LBRC, CW_TOGG, KC_A, KC_S, KC_D, KC_F, KC_G, KC_LPRN, KC_LSFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_LCTL, KC_LGUI, KC_LEFT, KC_RGHT, KC_LSFT, LT(3,KC_DEL), KC_LCTL, KC_LALT, KC_ENT, DM_PLY1, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL, KC_GRV, KC_RBRC, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_BSLS, KC_RPRN, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT, KC_BTN1, KC_BTN2, KC_PSCR, LGUI(KC_L), LT(2,KC_ENT), KC_SPC, KC_INS, MO(2), DM_PLY2, KC_WREF),
+    [1] = LAYOUT_5x7(KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_TAB, KC_Q, KC_W, KC_F, KC_P, KC_B, KC_LBRC, CW_TOGG, KC_A, KC_R, KC_S, KC_T, KC_G, KC_LPRN, KC_LSFT, KC_Z, KC_X, KC_C, KC_D, KC_V, KC_LCTL, KC_LGUI, KC_LEFT, KC_RGHT, KC_LSFT, LT(3,KC_DEL), KC_LCTL, KC_LALT, KC_ENT, DM_PLY1, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL, KC_GRV, KC_RBRC, KC_J, KC_L, KC_U, KC_Y, KC_SCLN, KC_BSLS, KC_RPRN, KC_M, KC_N, KC_E, KC_I, KC_O, KC_QUOT, KC_K, KC_H, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT, KC_BTN1, KC_BTN2, KC_PSCR, LGUI(KC_L), LT(2,KC_ENT), KC_SPC, KC_INS, MO(2), DM_PLY2, KC_WREF),
+    [2] = LAYOUT_5x7(KC_TRNS, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, EE_SAVE, KC_ACL1, KC_ACL2, KC_MS_U, KC_TRNS, KC_BRIU, TO(4), DW_DEC, DW_INC, KC_MS_L, KC_MS_D, KC_MS_R, KC_BRID, DF(0), DECEL_DEC, DECEL_INC, DPI_DEC, DPI_INC, SEN_DEC, SEN_INC, KC_MSTP, KC_MPLY, KC_MPRV, KC_MNXT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, DM_REC1, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, DB_TOGG, TO(3), LCTL(KC_BSPC), KC_BSPC, KC_UP, KC_DEL, LCTL(KC_DEL), EE_CLR, DF(1), LCTL(KC_LEFT), KC_LEFT, KC_DOWN, KC_RGHT, LCTL(KC_RGHT), KC_ACL0, KC_PGUP, KC_HOME, KC_DOWN, KC_END, KC_PGDN, KC_TRNS, KC_BTN1, KC_BTN2, KC_MUTE, QK_BOOT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, DM_REC2, KC_TRNS),
+    [3] = LAYOUT_5x7(KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, EE_LOAD, EE_INIT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, QK_BOOT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_NUM, KC_CALC, LSFT(KC_5), KC_PSLS, KC_PMNS, KC_EQL, KC_TRNS, KC_TRNS, KC_LPRN, KC_7, KC_8, KC_9, KC_PAST, KC_TRNS, KC_TRNS, KC_RPRN, KC_4, KC_5, KC_6, KC_PPLS, KC_TRNS, KC_COLN, KC_1, KC_2, KC_3, KC_ENT, KC_TRNS, KC_BTN1, KC_PDOT, KC_COMM, TO(0), KC_TRNS, KC_0, LSFT(KC_4), LSFT(KC_5), KC_TRNS, KC_TRNS),
+    [4] = LAYOUT_5x7(KC_TRNS, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_TRNS, KC_CAPS, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_TRNS, KC_LSFT, KC_A, KC_S, KC_D, KC_F, KC_G, KC_TRNS, KC_LCTL, KC_Z, KC_X, KC_C, KC_V, KC_LCTL, KC_NO, KC_I, KC_M, KC_SPC, KC_ESC, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, TO(0), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
+    [5] = LAYOUT_5x7(KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_BTN1, MO(2), KC_BTN2, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_BTN1, KC_BTN2, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS)
 };
 
 // Layer names for each layer
@@ -35,39 +37,66 @@ enum layer_names {
 // ***********************************
 // Persistence using vitualized EEPROM
 // ***********************************
+// Definition and declaration of struct
 typedef union {
-    uint32_t raw;
+    uint8_t raw[EECONFIG_USER_DATA_SIZE];
     struct {
-        uint16_t dpi              : 16;
-        uint16_t sen              : 16;
-        uint8_t  decel_width      : 8;
-        uint8_t  decel_strength   : 8;
-        //uint8_t  scroll_divisor_h : 8;
-        //uint8_t  scroll_divisor_v : 8;
+        uint16_t dpi               : 16;
+        uint16_t sen               : 16;
+        uint8_t  decel_width       : 8;
+        uint8_t  decel_strength    : 8;
+        uint8_t  scroll_divisor_h  : 8;
+        uint8_t  scroll_divisor_v  : 8;
     };
 } user_config_t;
 user_config_t user_config;
 
+// For debug printing
+void print_user_config(const char *prefix, void *config, size_t size, const char *suffix) {
+    if (debug_enable == true) {
+            dprintf("%s", prefix);  // Print the prefix
+        uint8_t *bytes = (uint8_t *)config;
+        for (size_t i = 0; i < size; i++) {
+            dprintf("%02X", bytes[i]);
+            if (i < size - 1) {
+                dprintf(" ");
+            }
+        }
+        dprintf("%s", suffix);  // Print the suffix
+    }
+}
+// Usage: print_user_config("Configuration value now: ", &user_config, EECONFIG_USER_DATA_SIZE, ". Writing to EEPROM.\n");
+
 // Default values
 void eeconfig_init_user_datablock(void) {  // EEPROM is getting reset!
     dprintf("EEPROM is getting reset to default values now!\n");
-    user_config.raw = 0;
     user_config.dpi = PMW33XX_CPI;
     user_config.sen = SEN_INITIAL;
     user_config.decel_width = DECEL_WIDTH;
     user_config.decel_strength = DECEL_STRENGTH;
-    //user_config.scroll_divisor_h = SCROLL_DIVISOR_H; // user update not yet implemented
-    //user_config.scroll_divisor_v = SCROLL_DIVISOR_V; // user update not yet implemented
-    dprintf("Configuration value now %lu. Writing to EEPROM.\n", user_config.raw);
-    eeconfig_update_user(user_config.raw); // Write default value to EEPROM now
+    user_config.scroll_divisor_h = SCROLL_DIVISOR_H;
+    user_config.scroll_divisor_v = SCROLL_DIVISOR_V;
+    print_user_config("Configuration value now: ", &user_config, EECONFIG_USER_DATA_SIZE, ". Writing to EEPROM.\n");
+    eeconfig_update_user_datablock(&user_config.raw); // Write default value to EEPROM now
 }
 
 // Read config on init
 void kpiu_read_config_from_eeprom(void) {
-    dprintf("Initializing from EEPROM. Initial value of user_config: %lu\n", user_config.raw);
-    user_config.raw = eeconfig_read_user();
+    print_user_config("Reading config from EEPROM. Previous value of user_config: ", &user_config, EECONFIG_USER_DATA_SIZE, "\n");
+    eeconfig_read_user_datablock(&user_config);
+    print_user_config("                                             New value: ", &user_config, EECONFIG_USER_DATA_SIZE, "\n");
     pointing_device_set_cpi(user_config.dpi);
-    dprintf("                                             New value: %lu\n", user_config.raw);
+
+    // Compare the DPI set in user_config with the actual device setting
+    if (debug_enable == true) {
+        wait_ms(10);  // Allow time for the sensor to apply the new CPI setting
+        uint16_t actual_dpi = pointing_device_get_cpi();
+        if (user_config.dpi == actual_dpi) {
+            dprintf("DPI set successfully: %u\n", actual_dpi);
+        } else {
+            dprintf("DPI discrepancy detected: Configured DPI = %u, Actual DPI = %u\n", user_config.dpi, actual_dpi);
+        }
+    }
 }
 
 
@@ -174,6 +203,7 @@ void msu_encoder_super_timer(void) { // To be executed in matrix_scan_user.
  * true when you turned the encoder clockwise, and false otherwise.
  */
 bool encoder_update_user(uint8_t index, bool clockwise) {
+    // dprintf("Encoder turned! Index: %d, Clockwise: %s\n", index, clockwise ? "true" : "false");
 
     // First encoder - Super alt-tab and super-backspace
     if (index == 0) {
@@ -329,8 +359,28 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             return false;
         case EE_SAVE:
             if (record->event.pressed) {
-                dprintf("EE_SAVE was pressed. Writing to virtualized EEPROM.\n");
-                eeconfig_update_user(user_config.raw);
+                print_user_config("EE_SAVE was pressed. Writing to virtualized EEPROM user_config: ", &user_config, EECONFIG_USER_DATA_SIZE, ".\n");
+                dprintf("  - dpi: %u\n", user_config.dpi);
+                dprintf("  - sen: %u\n", user_config.sen);
+                dprintf("  - decel_width: %u\n", user_config.decel_width);
+                dprintf("  - decel_strength: %u\n", user_config.decel_strength);
+                eeconfig_update_user_datablock(&user_config.raw);
+            }
+            return false;
+        case EE_LOAD:
+            if (record->event.pressed) {
+                eeconfig_read_user_datablock(&user_config.raw);
+                print_user_config("EE_LOAD was pressed. Writing to virtualized EEPROM user_config: ", &user_config, EECONFIG_USER_DATA_SIZE, ".\n");
+                dprintf("  - dpi: %u\n", user_config.dpi);
+                dprintf("  - sen: %u\n", user_config.sen);
+                dprintf("  - decel_width: %u\n", user_config.decel_width);
+                dprintf("  - decel_strength: %u\n", user_config.decel_strength);
+            }
+            return false;
+        case EE_INIT:
+            if (record->event.pressed) {
+                eeconfig_init_user_datablock();  // Manually trigger the initialization
+                dprintf("EE_INIT was pressed, manual EEPROM initialization triggered.\n");
             }
             return false;
     }
@@ -399,24 +449,20 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
     // Scrolling while in the _FN layer (which is just better than dedicating a separate key for that!)
     if (layer_state_is(_FN)) {
+
         // Calculate and accumulate scroll values based on mouse movement and divisors
-        #ifdef POINTING_DEVICE_INVERT_Y
-            scroll_accumulated_v -= (float)mouse_report.y / SCROLL_DIVISOR_V;
-        #else
-            scroll_accumulated_v += (float)mouse_report.y / SCROLL_DIVISOR_V;
-        #endif // POINTING_DEVICE_INVERT_Y
-        #ifdef POINTING_DEVICE_INVERT_X
-            scroll_accumulated_h -= (float)mouse_report.x / SCROLL_DIVISOR_H;
-        #else
-            scroll_accumulated_h += (float)mouse_report.x / SCROLL_DIVISOR_H;
-        #endif // POINTING_DEVICE_INVERT_X
+        scroll_accumulated_v -= (float)mouse_report.y / SCROLL_DIVISOR_V;
+        scroll_accumulated_h += (float)mouse_report.x / SCROLL_DIVISOR_H;
+
         // Assign integer parts of accumulated scroll values to the mouse report
         mouse_report.h = (int16_t)scroll_accumulated_h;
         mouse_report.v = (int16_t)scroll_accumulated_v;
         if (motionDebug) {dprintf("Scroll: %3d,%3d;  ", mouse_report.h, mouse_report.v);}
+
         // Update accumulated scroll values by subtracting the integer parts
         scroll_accumulated_h -= (int16_t)scroll_accumulated_h;
         scroll_accumulated_v -= (int16_t)scroll_accumulated_v;
+
         // Clear the X and Y values of the mouse report
         mouse_report.x = 0;
         mouse_report.y = 0;
@@ -576,7 +622,7 @@ bool oled_task_user(void) {
 uint8_t motion_found = 0x00;
 uint8_t motion_stored = 0x00;
 uint8_t squal_found = 0x00;
-uint16_t squal_frequency = 1000;
+uint16_t squal_frequency = 10000;
 uint16_t squal_timer = 0;
 void kpiu_squal_timer(void) { squal_timer = timer_read(); } // To be executed in keyboard_post_init_user.
 uint8_t observation_found = 0x00;
