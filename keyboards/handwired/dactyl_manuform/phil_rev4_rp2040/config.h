@@ -49,3 +49,6 @@
 #define PICO_FLASH_SIZE_BYTES (16 * 1024 * 1024)
 //#define WEAR_LEVELING_BACKING_SIZE 65536 // Because I have tons of space. This 64kb backing would by default mean a virtualized EEPROM of 32kb.
 //#define WEAR_LEVELING_LOGICAL_SIZE ((WEAR_LEVELING_BACKING_SIZE) / 8) // 8kb is PLENTY. I really only use 8 bytes for user config!
+
+// Having trouble with keyboard coming back after computer wakes from hibernate
+#define USB_SUSPEND_WAKEUP_DELAY 200
