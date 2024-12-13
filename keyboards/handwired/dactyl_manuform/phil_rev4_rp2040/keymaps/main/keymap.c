@@ -1,63 +1,327 @@
 #include QMK_KEYBOARD_H
+#include "keymap.h"
 
-enum my_keycodes {
-  DPI_INC = SAFE_RANGE,
-  DPI_DEC,
-  SEN_INC,
-  SEN_DEC,
-  DW_INC,
-  DW_DEC,
-  DECEL_INC,
-  DECEL_DEC,
-  EE_SAVE,
-  EE_LOAD,
-  EE_INIT
+#ifdef POINTING_DEVICE_ENABLE
+    #include <math.h> // Needed for the floor, fmin, and fmax functions in process_record_user
+#endif
+
+//#ifdef UNICODEMAP_ENABLE
+#include "unicode_map_khmer.h"
+const uint32_t PROGMEM unicode_map[] = {
+    // U+1780–U+17FF: Khmer block
+    // Consonants
+    [KA]                   = 0x1780,  // 0 ក
+    [KHA]                  = 0x1781,  // 1 ខ
+    [KO]                   = 0x1782,  // 2 គ
+    [KHO]                  = 0x1783,  // 3 ឃ
+    [NGO]                  = 0x1784,  // 4 ង
+    [CA]                   = 0x1785,  // 5 ច
+    [CHA]                  = 0x1786,  // 6 ឆ
+    [CO]                   = 0x1787,  // 7 ជ
+    [CHO]                  = 0x1788,  // 8 ឈ
+    [NYO]                  = 0x1789,  // 9 ញ
+    [DA]                   = 0x178A,  // 10 ដ
+    [TTHA]                 = 0x178B,  // 11 ឋ
+    [DO]                   = 0x178C,  // 12 ឌ
+    [TTHO]                 = 0x178D,  // 13 ឍ
+    [NNA]                  = 0x178E,  // 14 ណ
+    [TA]                   = 0x178F,  // 15 ត
+    [THA]                  = 0x1790,  // 16 ថ
+    [TO]                   = 0x1791,  // 17 ទ
+    [THO]                  = 0x1792,  // 18 ធ
+    [NO]                   = 0x1793,  // 19 ន
+    [BA]                   = 0x1794,  // 20 ប
+    [PHA]                  = 0x1795,  // 21 ផ
+    [PO]                   = 0x1796,  // 22 ព
+    [PHO]                  = 0x1797,  // 23 ភ
+    [MO]                   = 0x1798,  // 24 ម
+    [YO]                   = 0x1799,  // 25 យ
+    [RO]                   = 0x179A,  // 26 រ
+    [LO]                   = 0x179B,  // 27 ល
+    [VO]                   = 0x179C,  // 28 វ
+    [SHA]                  = 0x179D,  // 29 ឝ
+    [SSO]                  = 0x179E,  // 30 ឞ
+    [SA]                   = 0x179F,  // 31 ស
+    [HA]                   = 0x17A0,  // 32 ហ
+    [LA]                   = 0x17A1,  // 33 ល
+    [QA]                   = 0x17A2,  // 34 អ
+
+    // Independent Vowels
+    [QAQ]                  = 0x17A3,  // 35 ឣ - use of this character is strongly discouraged. 17A2 should be used instead
+    [QAA]                  = 0x17A4,  // 36 ឤ - use of this character is strongly discouraged. 17A2 then 17B6 should be used instead
+    [QI]                   = 0x17A5,  // 37 ឥ
+    [QII]                  = 0x17A6,  // 38 ឦ
+    [QU]                   = 0x17A7,  // 39 ឧ
+    [QUK]                  = 0x17A8,  // 40 ឨ
+    [QUU]                  = 0x17A9,  // 41 ឩ
+    [QUUV]                 = 0x17AA,  // 42 ឪ
+    [RY]                   = 0x17AB,  // 43 ឫ
+    [RYY]                  = 0x17AC,  // 44 ឬ
+    [LY]                   = 0x17AD,  // 45 ឭ
+    [LYY]                  = 0x17AE,  // 46 ឮ
+    [QE]                   = 0x17AF,  // 47 ឯ
+    [QAI]                  = 0x17B0,  // 48 ឰ
+    [QOO_TYPE_ONE]         = 0x17B1,  // 49 ឱ
+    [QOO_TYPE_TWO]         = 0x17B2,  // 50 ឲ - invisible combining marks for phonetic transcription - solely for compatibility - usage discouraged
+    [QAU]                  = 0x17B3,  // 51 ឳ - invisible combining marks for phonetic transcription - solely for compatibility - usage discouraged
+
+    // Dependent vowel signs
+    [AA]                   = 0x17B6,  // 52 ា
+    [I]                    = 0x17B7,  // 53 ិ
+    [II]                   = 0x17B8,  // 54 ី
+    [Y]                    = 0x17B9,  // 55 ឹ
+    [YY]                   = 0x17BA,  // 56 ឺ
+    [U]                    = 0x17BB,  // 57 ុ
+    [UU]                   = 0x17BC,  // 58 ូ
+    [UA]                   = 0x17BD,  // 59 ួ
+    [OE]                   = 0x17BE,  // 60 ើ
+    [YA]                   = 0x17BF,  // 61 ឿ
+    [IE]                   = 0x17C0,  // 62 ុា
+    [E]                    = 0x17C1,  // 63 ូា
+    [AE]                   = 0x17C2,  // 64 ៲
+    [AI]                   = 0x17C3,  // 65 ៳
+    [OO]                   = 0x17C4,  // 66 ៴
+    [AU]                   = 0x17C5,  // 67 ៵
+
+    // Various signs
+    [NIKAHIT]              = 0x17C6,  // 68 ៶
+    [REAHMUK]              = 0x17C7,  // 69 ៷
+    [YUUKALEAPINTU]        = 0x17C8,  // 70 ៸
+    [MUUSIKATOAN]          = 0x17C9,  // 71 ៹
+    [TRIISAP]              = 0x17CA,  // 72 ៺
+    [BANTOC]               = 0x17CB,  // 73 ៻
+    [ROBAT]                = 0x17CC,  // 74 ៼
+    [TOANDAKHIAT]          = 0x17CD,  // 75 ៽
+    [KAKABAT]              = 0x17CE,  // 76 ៾
+    [AHSDA]                = 0x17CF,  // 77 ៿
+    [SAMYOK_SANNYA]        = 0x17D0,  // 78 ᄀ
+    [VIRIAM]               = 0x17D1,  // 79 ᄁ
+    [COENG]                = 0x17D2,  // 80 ᄂ
+    [BATHAMASAT]           = 0x17D3,  // 81 ᄃ
+    [KHAN]                 = 0x17D4,  // 82 ᄄ
+    [BARIYOOSAN]           = 0x17D5,  // 83 ᄅ
+    [CAMNUC_PII_KUUH]      = 0x17D6,  // 84 ᄆ
+    [LEK_TOO]              = 0x17D7,  // 85 ᄇ
+    [BEYYAL]               = 0x17D8,  // 86 ᄈ
+    [PHNAEK_MUAN]          = 0x17D9,  // 87 ᄉ
+    [KOOMUUT]              = 0x17DA,  // 88 ᄊ
+    [RIEL]                 = 0x17DB,  // 89 ᄋ
+    [AVAKRAHASANYA]        = 0x17DC,  // 90 ᄌ
+    [ATTHACAN]             = 0x17DD,  // 91 ᄍ
+
+    // Digits
+    [ZERO]                 = 0x17E0,  // 92 ០
+    [ONE]                  = 0x17E1,  // 93 ១
+    [TWO]                  = 0x17E2,  // 94 ២
+    [THREE]                = 0x17E3,  // 95 ៣
+    [FOUR]                 = 0x17E4,  // 96 ៤
+    [FIVE]                 = 0x17E5,  // 97 ៥
+    [SIX]                  = 0x17E6,  // 98 ៦
+    [SEVEN]                = 0x17E7,  // 99 ៧
+    [EIGHT]                = 0x17E8,  // 100 ៨
+    [NINE]                 = 0x17E9,  // 101 ៩
+    [LEK_ATTAK_SON]        = 0x17F0,  // 102 ៰
+    [LEK_ATTAK_MUOY]       = 0x17F1,  // 103 ៱
+    [LEK_ATTAK_PII]        = 0x17F2,  // 104 ៲
+    [LEK_ATTAK_BEI]        = 0x17F3,  // 105 ៳
+    [LEK_ATTAK_BUON]       = 0x17F4,  // 106 ៴
+    [LEK_ATTAK_PRAM]       = 0x17F5,  // 107 ៵
+    [LEK_ATTAK_PRAM_MUOY]  = 0x17F6,  // 108 ៶
+    [LEK_ATTAK_PRAM_PII]   = 0x17F7,  // 109 ៷
+    [LEK_ATTAK_PRAM_BEI]   = 0x17F8,  // 110 ៸
+    [LEK_ATTAK_PRAM_BUON]  = 0x17F9,  // 111 ៹
+
+    // U+19E0–U+19FF: Khmer Symbols block
+    [PATHAMASAT]           = 0x19E0,  // 112 ᧿ (Fifteenth waning day)
+    [MUOY_KOET]            = 0x19E1,  // 113 ᧾ (Fourteenth waning day)
+    [PII_KOET]             = 0x19E2,  // 114 ᧽ (Thirteenth waning day)
+    [BEI_KOET]             = 0x19E3,  // 115 ᧼ (Twelfth waning day)
+    [BUON_KOET]            = 0x19E4,  // 116 ᧻ (Eleventh waning day)
+    [PRAM_KOET]            = 0x19E5,  // 117 ᧺ (Tenth waning day)
+    [PRAM_MUOY_KOET]       = 0x19E6,  // 118 ᧹ (Ninth waning day)
+    [PRAM_PII_KOET]        = 0x19E7,  // 119 ᧸ (Eighth waning day)
+    [PRAM_BEI_KOET]        = 0x19E8,  // 120 ᧷ (Seventh waning day)
+    [PRAM_BUON_KOET]       = 0x19E9,  // 121 ᧶ (Sixth waning day)
+    [DAP_KOET]             = 0x19EA,  // 122 ᧵ (Fifth waning day)
+    [DAP_MUOY_KOET]        = 0x19EB,  // 123 ᧴ (Fourth waning day)
+    [DAP_PII_KOET]         = 0x19EC,  // 124 ᧳ (Third waning day)
+    [DAP_BEI_KOET]         = 0x19ED,  // 125 ᧲ (Second waning day)
+    [DAP_BUON_KOET]        = 0x19EE,  // 126 ᧱ (First waning day)
+    [DAP_PRAM_KOET]        = 0x19EF,  // 127 ᧰ (Second Ashadha in leap year)
+    [TUTEYASAT]            = 0x19F0,  // 128 ᧯ (Fifteenth waxing day)
+    [MUOY_ROC]             = 0x19F1,  // 129 ᧮ (Fourteenth waxing day)
+    [PII_ROC]              = 0x19F2,  // 130 ᧭ (Thirteenth waxing day)
+    [BEI_ROC]              = 0x19F3,  // 131 ᧬ (Twelfth waxing day)
+    [BUON_ROC]             = 0x19F4,  // 132 ᧫ (Eleventh waxing day)
+    [PRAM_ROC]             = 0x19F5,  // 133 ᧪ (Tenth waxing day)
+    [PRAM_MUOY_ROC]        = 0x19F6,  // 134 ᧩ (Ninth waxing day)
+    [PRAM_PII_ROC]         = 0x19F7,  // 135 ᧨ (Eighth waxing day)
+    [PRAM_BEI_ROC]         = 0x19F8,  // 136 ᧧ (Seventh waxing day)
+    [PRAM_BUON_ROC]        = 0x19F9,  // 137 ᧦ (Sixth waxing day)
+    [DAP_ROC]              = 0x19FA,  // 138 ᧥ (Fifth waxing day)
+    [DAP_MUOY_ROC]         = 0x19FB,  // 139 ᧤ (Fourth waxing day)
+    [DAP_PII_ROC]          = 0x19FC,  // 140 ᧣ (Third waxing day)
+    [DAP_BEI_ROC]          = 0x19FD,  // 141 ᧢ (Second waxing day)
+    [DAP_BUON_ROC]         = 0x19FE,  // 142 ᧡ (First waxing day)
+    [DAP_PRAM_ROC]         = 0x19FF,  // 143 ᧠ (Represents the first Ashadha)
+
+    // Not necessarily Khmer, but widely used
+    [ZWS]                  = 0x200B   // 144  (Zero Width Space)
 };
+//#endif
+
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_5x7(KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_LBRC, CW_TOGG, KC_A, KC_S, KC_D, KC_F, KC_G, KC_LPRN, KC_LSFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_LCTL, KC_LGUI, KC_LEFT, KC_RGHT, KC_LSFT, LT(3,KC_DEL), KC_LCTL, KC_LALT, KC_ENT, DM_PLY1, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL, KC_GRV, KC_RBRC, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_BSLS, KC_RPRN, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT, KC_BTN1, KC_BTN2, KC_PSCR, LGUI(KC_L), LT(2,KC_ENT), KC_SPC, KC_INS, MO(2), DM_PLY2, KC_WREF),
-    [1] = LAYOUT_5x7(KC_ESC, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_TAB, KC_Q, KC_W, KC_F, KC_P, KC_B, KC_LBRC, CW_TOGG, KC_A, KC_R, KC_S, KC_T, KC_G, KC_LPRN, KC_LSFT, KC_Z, KC_X, KC_C, KC_D, KC_V, KC_LCTL, KC_LGUI, KC_LEFT, KC_RGHT, KC_LSFT, LT(3,KC_DEL), KC_LCTL, KC_LALT, KC_ENT, DM_PLY1, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL, KC_GRV, KC_RBRC, KC_J, KC_L, KC_U, KC_Y, KC_SCLN, KC_BSLS, KC_RPRN, KC_M, KC_N, KC_E, KC_I, KC_O, KC_QUOT, KC_K, KC_H, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT, KC_BTN1, KC_BTN2, KC_PSCR, LGUI(KC_L), LT(2,KC_ENT), KC_SPC, KC_INS, MO(2), DM_PLY2, KC_WREF),
-    [2] = LAYOUT_5x7(KC_TRNS, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, EE_SAVE, KC_ACL1, KC_ACL2, KC_MS_U, KC_TRNS, KC_BRIU, TO(4), DW_DEC, DW_INC, KC_MS_L, KC_MS_D, KC_MS_R, KC_BRID, DF(0), DECEL_DEC, DECEL_INC, DPI_DEC, DPI_INC, SEN_DEC, SEN_INC, KC_MSTP, KC_MPLY, KC_MPRV, KC_MNXT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, DM_REC1, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, DB_TOGG, TO(3), LCTL(KC_BSPC), KC_BSPC, KC_UP, KC_DEL, LCTL(KC_DEL), EE_CLR, DF(1), LCTL(KC_LEFT), KC_LEFT, KC_DOWN, KC_RGHT, LCTL(KC_RGHT), KC_ACL0, KC_PGUP, KC_HOME, KC_DOWN, KC_END, KC_PGDN, KC_TRNS, KC_BTN1, KC_BTN2, KC_MUTE, QK_BOOT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, DM_REC2, KC_TRNS),
-    [3] = LAYOUT_5x7(KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, EE_LOAD, EE_INIT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, QK_BOOT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_NUM, KC_CALC, LSFT(KC_5), KC_PSLS, KC_PMNS, KC_EQL, KC_TRNS, KC_TRNS, KC_LPRN, KC_7, KC_8, KC_9, KC_PAST, KC_TRNS, KC_TRNS, KC_RPRN, KC_4, KC_5, KC_6, KC_PPLS, KC_TRNS, KC_COLN, KC_1, KC_2, KC_3, KC_ENT, KC_TRNS, KC_BTN1, KC_PDOT, KC_COMM, TO(0), KC_TRNS, KC_0, LSFT(KC_4), LSFT(KC_5), KC_TRNS, KC_TRNS),
-    [4] = LAYOUT_5x7(KC_TRNS, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_TRNS, KC_CAPS, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_TRNS, KC_LSFT, KC_A, KC_W, KC_D, KC_F, KC_G, KC_TRNS, KC_LCTL, KC_Z, KC_S, KC_C, KC_V, KC_LCTL, KC_M, KC_I, KC_X, KC_SPC, KC_ESC, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, TO(0), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
-    [5] = LAYOUT_5x7(KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_BTN1, MO(2), KC_BTN2, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_BTN1, KC_BTN2, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS)
+    [1] = LAYOUT_5x7(KC_ESC, UP(TWO, LEK_ATTAK_PII), UP(TWO, LEK_ATTAK_PII), UP(THREE, LEK_ATTAK_BEI), UP(FOUR, LEK_ATTAK_BUON), UP(FIVE, LEK_ATTAK_PRAM), KC_NO, KC_TAB, UP(KO, KHO), UP(CA, CHA), UP(CO, CHO), UP(NGO, NYO), UP(DA, TTHA), KC_NO, CW_TOGG, UP(SA, HA), UP(KA, KHA), UP(NO, NNA), UP(RO, VO), UP(BA, PHA), KC_LPRN, KC_LSFT, UP(DO, TTHO), UP(TA, THA), UP(TO, THO), UP(PO, PHO), UP(YO, QA), KC_LCTL, KC_LGUI, KC_LEFT, KC_RGHT, KC_LSFT, LT(3,KC_DEL), KC_LCTL, KC_LALT, KC_ENT, DM_PLY1, KC_NO, UP(SIX, LEK_ATTAK_PRAM_MUOY), UP(SEVEN, LEK_ATTAK_PRAM_PII), UP(EIGHT, LEK_ATTAK_PRAM_BEI), UP(NINE, LEK_ATTAK_PRAM_BUON), UP(ZERO, LEK_ATTAK_SON), UP(KOOMUUT, PHNAEK_MUAN), KC_NO, UP(OE, YA), UP(I, IE), UM(II), UP(Y, LY), UP(YY, LYY), UP(NIKAHIT, KHAN), KC_TRNS, UP(E, OO), UP(AA, AU), UM(COENG), UM(MO), UP(LO, LA), UP(BANTOC, MUUSIKATOAN), UP(AE, AI), UM(U), UM(UU), UM(UA), UP(REAHMUK, YUUKALEAPINTU), KC_RSFT, KC_BTN1, KC_BTN2, KC_PSCR, LGUI(KC_L), LT(2,KC_ENT), KC_SPC, MO(5), MO(2), DM_PLY2, KC_WREF),
+    [2] = LAYOUT_5x7(KC_TRNS, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, QK_UNICODE_MODE_NEXT, DW_INC, DECEL_INC, DPI_INC, SEN_INC, KC_BRIU, TO(4), QK_UNICODE_MODE_PREVIOUS, DW_DEC, DECEL_DEC, DPI_DEC, SEN_DEC, KC_BRID, TO(0), EE_SAVE, EE_LOAD, EE_INIT, EE_CLR, KC_NO, DB_TOGG, KC_MSTP, KC_MPLY, KC_MPRV, KC_MNXT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, DM_REC1, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_NO, TO(3), LCTL(KC_BSPC), KC_BSPC, KC_UP, KC_DEL, LCTL(KC_DEL), KC_NO, TO(1), LCTL(KC_LEFT), KC_LEFT, KC_DOWN, KC_RGHT, LCTL(KC_RGHT), KC_NO, KC_PGUP, KC_HOME, KC_DOWN, KC_END, KC_PGDN, KC_TRNS, KC_BTN1, KC_BTN2, KC_MUTE, QK_BOOT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, DM_REC2, KC_TRNS),
+    [3] = LAYOUT_5x7(KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, QK_BOOT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_NUM, KC_CALC, LSFT(KC_5), KC_PSLS, KC_PMNS, KC_EQL, KC_TRNS, KC_TRNS, KC_LPRN, KC_7, KC_8, KC_9, KC_PAST, KC_TRNS, KC_TRNS, KC_RPRN, KC_4, KC_5, KC_6, KC_PPLS, KC_TRNS, KC_COLN, KC_1, KC_2, KC_3, KC_ENT, KC_TRNS, KC_BTN1, KC_PDOT, KC_COMM, TO(0), KC_TRNS, KC_0, LSFT(KC_4), LSFT(KC_5), KC_TRNS, KC_TRNS),
+    [4] = LAYOUT_5x7(KC_TRNS, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_TRNS, KC_CAPS, KC_Q, KC_NO, KC_E, KC_R, KC_T, KC_TRNS, KC_LSFT, KC_A, KC_W, KC_D, KC_F, KC_G, KC_TRNS, KC_LCTL, KC_Z, KC_S, KC_C, KC_V, KC_LCTL, KC_M, KC_I, KC_X, KC_SPC, KC_ESC, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, TO(0), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
+    [5] = LAYOUT_5x7(KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, UM(TRIISAP), UM(BANTOC), UM(ROBAT), UM(TOANDAKHIAT), KC_NO, KC_NO, KC_NO, UM(KAKABAT), UM(AHSDA), UM(SAMYOK_SANNYA), UM(VIRIAM), UM(ATTHACAN), KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, UM(LEK_TOO), KC_NO, KC_NO, UM(QI), UM(QII), UM(RY), UM(RYY), UM(BARIYOOSAN), KC_NO, UM(QOO_TYPE_ONE), UM(QAU), UM(QE), KC_NO, KC_NO, UM(RIEL), UM(QAI), UM(QU), UM(QUU), UM(QUUV), UM(CAMNUC_PII_KUUH), KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_TRNS, KC_NO, KC_NO, KC_NO)
 };
 
 // Layer names for each layer
 enum layer_names {
 	_QWERTY,
-	_COLEMAK,
+	_KHMER,
 	_FN,
 	_NUM,
 	_GAME,
-  _MOUSE
+    _ALTGR
 };
+
+user_config_t user_config = {0}; // Init user config just for linker purposes. True initialization occurs in eeconfig_init_user_datablock much lower below.
+
+// Custom Keycodes
+bool process_record_user(uint16_t keycode, keyrecord_t* record) {
+    if (record->event.pressed) {
+        char message[22];
+        switch (keycode) {
+
+            // Trackball specific codes
+            #ifdef POINTING_DEVICE_ENABLE
+            // DPI / CPI - affects how the trackball sensor tracks/reports motion
+            case DPI_INC:
+                if (!reported) {
+                    dprintf("First DPI: %u. After Initialization: %u\n", first_dpi, init_dpi);
+                    reported = true;
+                }
+                detected_dpi = pointing_device_get_cpi();
+                wait_ms(50);
+                dprintf("DPI_INC was pressed. Original DPI configured: %u. Original DPI detected: %u\n", user_config.dpi, detected_dpi);
+                user_config.dpi = fmin(PMW33XX_CPI_MAX, floor(((user_config.dpi * DPI_INCREMENT / 100) / PMW33XX_CPI_STEP) + 0.5) * PMW33XX_CPI_STEP);
+                pointing_device_set_cpi(user_config.dpi);
+                wait_ms(50);
+                detected_dpi = pointing_device_get_cpi();
+                wait_ms(50);
+                dprintf("New DPI configured: %u. New DPI detected: %u\n", user_config.dpi, detected_dpi);
+                snprintf(message, sizeof(message), "DPI_INC: %u", user_config.dpi);
+                set_display_message(message);
+                break;
+            case DPI_DEC:
+                dprintf("DPI_DEC was pressed. Original DPI: %u.\n", user_config.dpi);
+                user_config.dpi = fmax(PMW33XX_CPI_MIN, floor(((user_config.dpi * DPI_DECREMENT / 100) / PMW33XX_CPI_STEP) + 0.5) * PMW33XX_CPI_STEP);
+                dprintf("New DPI: %u.\n", user_config.dpi);
+                pointing_device_set_cpi(user_config.dpi);
+                snprintf(message, sizeof(message), "DPI_DEC: %u", user_config.dpi);
+                set_display_message(message);
+                break;
+
+            // Sensitivity - mathematically adjust how sensitive we are to what the sensor reports
+            case SEN_INC:
+                dprintf("SEN_INC was pressed. Original SEN: %u.\n", user_config.sen);
+                user_config.sen = fmin(65535, (uint16_t)user_config.sen * SEN_INCREMENT / 100);
+                dprintf("New SEN: %u.\n", user_config.sen);
+                snprintf(message, sizeof(message), "SEN_INC: %u", user_config.sen / 10);
+                set_display_message(message);
+                break;
+            case SEN_DEC:
+                dprintf("SEN_DEC was pressed. Original SEN: %u.\n", user_config.sen);
+                user_config.sen = fmax(2, (uint16_t)user_config.sen * SEN_DECREMENT / 100);
+                dprintf("New SEN: %u.\n", user_config.sen);
+                snprintf(message, sizeof(message), "SEN_DEC: %u", user_config.sen / 10);
+                set_display_message(message);
+                break;
+
+            // Width of the decel curve
+            case DW_DEC:
+                dprintf("DW_DEC was pressed. Original Decel Width: %u.\n", user_config.decel_width);
+                user_config.decel_width -= 1;
+                dprintf("New Decel Width: %u.\n", user_config.decel_width);
+                snprintf(message, sizeof(message), "DW_DEC: %u", user_config.decel_width);
+                set_display_message(message);
+                break;
+            case DW_INC:
+                dprintf("DW_INC was pressed. Original Decel Width: %u.\n", user_config.decel_width);
+                user_config.decel_width += 1;
+                dprintf("New Decel Width: %u.\n", user_config.decel_width);
+                snprintf(message, sizeof(message), "DW_INC: %u", user_config.decel_width);
+                set_display_message(message);
+                break;
+
+            // Cursor movement desensitization
+            case DECEL_DEC:
+                dprintf("DECEL_DEC was pressed. Original Decel Strength: %u.\n", user_config.decel_strength);
+                user_config.decel_strength -= 1;
+                dprintf("New Decel Strength: %u.\n", user_config.decel_strength);
+                snprintf(message, sizeof(message), "DECEL_DEC: %u", user_config.decel_strength);
+                set_display_message(message);
+                break;
+            case DECEL_INC:
+                dprintf("DECEL_INC was pressed. Original Decel Strength: %u.\n", user_config.decel_strength);
+                user_config.decel_strength += 1;
+                dprintf("New Decel Strength: %u.\n", user_config.decel_strength);
+                snprintf(message, sizeof(message), "DECEL_INC: %u", user_config.decel_strength);
+                set_display_message(message);
+                break;
+            #endif // POINTING_DEVICE_ENABLE
+
+            // EEPROM functions
+            #ifdef EEPROM_ENABLE
+            case EE_SAVE:
+                print_user_config("EE_SAVE was pressed. Writing to virtualized EEPROM user_config: ", &user_config, EECONFIG_USER_DATA_SIZE, ".\n");
+                dprintf("  - dpi: %u\n", user_config.dpi);
+                dprintf("  - sen: %u\n", user_config.sen);
+                dprintf("  - decel_width: %u\n", user_config.decel_width);
+                dprintf("  - decel_strength: %u\n", user_config.decel_strength);
+                eeconfig_update_user_datablock(&user_config.raw);
+                set_display_message("EE_SAVE");
+                break;
+            case EE_LOAD:
+                eeconfig_read_user_datablock(&user_config.raw);
+                print_user_config("EE_LOAD was pressed. Writing to virtualized EEPROM user_config: ", &user_config, EECONFIG_USER_DATA_SIZE, ".\n");
+                dprintf("  - dpi: %u\n", user_config.dpi);
+                dprintf("  - sen: %u\n", user_config.sen);
+                dprintf("  - decel_width: %u\n", user_config.decel_width);
+                dprintf("  - decel_strength: %u\n", user_config.decel_strength);
+                set_display_message("EE_LOAD");
+                break;
+            case EE_INIT:
+                eeconfig_init_user_datablock();
+                dprintf("EE_INIT was pressed, manual EEPROM initialization triggered.\n");
+                set_display_message("EE_INIT");
+                break;
+            #endif // EEPROM_ENABLE
+
+            default:
+                break;
+        }
+    }
+    return true; // Normal handling for all other keycodes not returned above
+}
 
 
 // ***********************************
 // Persistence using vitualized EEPROM
 // ***********************************
-// Definition and declaration of struct
-typedef union {
-    uint8_t raw[EECONFIG_USER_DATA_SIZE];
-    struct {
-        uint16_t dpi               : 16;
-        uint16_t sen               : 16;
-        uint8_t  decel_width       : 8;
-        uint8_t  decel_strength    : 8;
-        uint8_t  scroll_divisor_h  : 8;
-        uint8_t  scroll_divisor_v  : 8;
-    };
-} user_config_t;
-user_config_t user_config;
+#ifdef EEPROM_ENABLE
 
 // For debug printing
 void print_user_config(const char *prefix, void *config, size_t size, const char *suffix) {
     if (debug_enable == true) {
             dprintf("%s", prefix);  // Print the prefix
-        uint8_t *bytes = (uint8_t *)config;
         for (size_t i = 0; i < size; i++) {
-            dprintf("%02X", bytes[i]);
+            dprintf("%02X", ((uint8_t *)config)[i]);
             if (i < size - 1) {
                 dprintf(" ");
             }
@@ -98,6 +362,7 @@ void kpiu_read_config_from_eeprom(void) {
         }
     }
 }
+#endif // EEPROM_ENABLE
 
 
 // *******************
@@ -277,116 +542,6 @@ uint16_t detected_dpi = 1;
 bool reported = false;
 // Some of the variables above are initiated at pointing_device_init_user defined near the bottom of this file.
 
-#include <math.h> // Needed for the floor, fmin, and fmax functions below
-
-// Custom keycodes for mouse functions
-bool process_record_user(uint16_t keycode, keyrecord_t* record) {
-    switch (keycode) {
-
-        // DPI / CPI - affects how the trackball sensor tracks/reports motion
-        case DPI_INC:
-            if (record->event.pressed) {
-                if (!reported) {
-                    dprintf("First DPI: %u. After Initialization: %u\n", first_dpi, init_dpi);
-                    reported = true;
-                }
-                detected_dpi = pointing_device_get_cpi();
-                wait_ms(50);
-                dprintf("DPI_INC was pressed. Original DPI configured: %u. Original DPI detected: %u\n", user_config.dpi, detected_dpi);
-                user_config.dpi = fmin(PMW33XX_CPI_MAX, floor(((user_config.dpi * DPI_INCREMENT / 100) / PMW33XX_CPI_STEP) + 0.5) * PMW33XX_CPI_STEP);
-                pointing_device_set_cpi(user_config.dpi);
-                wait_ms(50);
-                detected_dpi = pointing_device_get_cpi();
-                wait_ms(50);
-                dprintf("New DPI configured: %u. New DPI detected: %u\n", user_config.dpi, detected_dpi);
-            }
-            return false;
-        case DPI_DEC:
-            if (record->event.pressed) {
-                dprintf("DPI_DEC was pressed. Original DPI: %u.\n", user_config.dpi);
-                user_config.dpi = fmax(PMW33XX_CPI_MIN, floor(((user_config.dpi * DPI_DECREMENT / 100) / PMW33XX_CPI_STEP) + 0.5) * PMW33XX_CPI_STEP);
-                dprintf("New DPI: %u.\n", user_config.dpi);
-                pointing_device_set_cpi(user_config.dpi);
-            }
-            return false;
-
-        // Sensitivity - mathematically adjust how sensitive we are to what the sensor reports
-        case SEN_INC:
-            if (record->event.pressed) {
-                dprintf("SEN_INC was pressed. Original SEN: %u.\n", user_config.sen);
-                user_config.sen = fmin(65535, (uint16_t)user_config.sen * SEN_INCREMENT / 100);
-                dprintf("New SEN: %u.\n", user_config.sen);
-            }
-            return false;
-        case SEN_DEC:
-            if (record->event.pressed) {
-                dprintf("SEN_DEC was pressed. Original SEN: %u.\n", user_config.sen);
-                user_config.sen = fmax(2, (uint16_t)user_config.sen * SEN_DECREMENT / 100);
-                dprintf("New SEN: %u.\n", user_config.sen);
-            }
-            return false;
-
-        // Width of the decel curve... IE do only super slow movements track more precise, or do some medium movements get reduced sensitivity as well?
-        case DW_DEC:
-              if (record->event.pressed) {
-                dprintf("DW_DEC was pressed. Original Decel Width: %u.\n", user_config.decel_width);
-                user_config.decel_width -= 1;
-                dprintf("New Decel Width: %u.\n", user_config.decel_width);
-            }
-            return false;
-        case DW_INC:
-              if (record->event.pressed) {
-                dprintf("DW_INC was pressed. Original Decel Width: %u.\n", user_config.decel_width);
-                user_config.decel_width += 1;
-                dprintf("New Decel Width: %u.\n", user_config.decel_width);
-            }
-            return false;
-
-        // How significantly should cursor movement be desensitized when trying to move the trackball slowly?
-        case DECEL_DEC:
-              if (record->event.pressed) {
-                dprintf("DECEL_DEC was pressed. Original Decel Strength: %u.\n", user_config.decel_strength);
-                user_config.decel_strength -= 1;
-                dprintf("New Decel Strength: %u.\n", user_config.decel_strength);
-            }
-            return false;
-        case DECEL_INC:
-              if (record->event.pressed) {
-                dprintf("DECEL_INC was pressed. Original Decel Strength: %u.\n", user_config.decel_strength);
-                user_config.decel_strength += 1;
-                dprintf("New Decel Strength: %u.\n", user_config.decel_strength);
-            }
-            return false;
-        case EE_SAVE:
-            if (record->event.pressed) {
-                print_user_config("EE_SAVE was pressed. Writing to virtualized EEPROM user_config: ", &user_config, EECONFIG_USER_DATA_SIZE, ".\n");
-                dprintf("  - dpi: %u\n", user_config.dpi);
-                dprintf("  - sen: %u\n", user_config.sen);
-                dprintf("  - decel_width: %u\n", user_config.decel_width);
-                dprintf("  - decel_strength: %u\n", user_config.decel_strength);
-                eeconfig_update_user_datablock(&user_config.raw);
-            }
-            return false;
-        case EE_LOAD:
-            if (record->event.pressed) {
-                eeconfig_read_user_datablock(&user_config.raw);
-                print_user_config("EE_LOAD was pressed. Writing to virtualized EEPROM user_config: ", &user_config, EECONFIG_USER_DATA_SIZE, ".\n");
-                dprintf("  - dpi: %u\n", user_config.dpi);
-                dprintf("  - sen: %u\n", user_config.sen);
-                dprintf("  - decel_width: %u\n", user_config.decel_width);
-                dprintf("  - decel_strength: %u\n", user_config.decel_strength);
-            }
-            return false;
-        case EE_INIT:
-            if (record->event.pressed) {
-                eeconfig_init_user_datablock();  // Manually trigger the initialization
-                dprintf("EE_INIT was pressed, manual EEPROM initialization triggered.\n");
-            }
-            return false;
-    }
-    return true; // Normal handling for all other keycodes not returned above.
-}
-
 // Customize Auto Mouse to treat back and forward browser buttons as mouse keys
 #ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
 bool is_mouse_record_user(uint16_t keycode, keyrecord_t* record) {
@@ -511,8 +666,67 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
     return OLED_ROTATION_180;
 }
 
+// Other Variables and initiation
 static uint32_t oled_logo_timer;
 void kpiu_oled_timer(void) { oled_logo_timer = timer_read32(); }
+static uint32_t display_timer = 0;
+static bool display_override = false;
+static char display_message[22] = "";
+
+// Function to set the display override message
+void set_display_message(const char* message) {
+    strncpy(display_message, message, sizeof(display_message) - 1);
+    display_message[sizeof(display_message) - 1] = '\0';
+    display_override = true;
+    display_timer = timer_read32();
+}
+
+#if defined(UNICODE_ENABLE) || defined(UNICODEMAP_ENABLE)
+// Unicode input mode callback
+void unicode_input_mode_set_user(uint8_t input_mode) {
+    static const char *input_mode_names[] = {
+        "UC Mode: macOS",
+        "UC Mode: Linux",
+        "UC Mode: Windows",
+        "UC Mode: BSD",
+        "UC Mode: WinCompose",
+        "UC Mode: Emacs"
+    };
+
+    // Ensure input_mode is within range
+    if (input_mode < sizeof(input_mode_names) / sizeof(input_mode_names[0])) {
+        set_display_message(input_mode_names[input_mode]);
+    } else {
+        set_display_message("UC Mode: Unknown");
+    }
+}
+
+// Override the unicode layer when crtl, win(gui), or left alt is held
+void msu_mod_override(void) {
+    static bool mod_override_active = false;
+    uint8_t mods = get_mods();
+
+    // Check if any relevant mods are active (ignoring RALT and weak mods)
+    if (get_mods() & (MOD_MASK_CTRL | MOD_MASK_GUI | MOD_BIT(KC_LALT))) {
+        if (!mod_override_active && IS_LAYER_ON(_KHMER)) {
+            // Modifier held, temporarily move to QWERTY by disabling Khmer
+            dprintf("Overriding Layers.\n");
+            layer_off(_KHMER);
+            layer_on(_QWERTY);
+            mod_override_active = true;
+        }
+    } else if (mod_override_active) {
+        // Modifier released, restore Khmer layer
+        dprintf("Mod released, returning layers.\n");
+        layer_off(_QWERTY);
+        layer_on(_KHMER);
+        mod_override_active = false;
+    }
+}
+#endif // UNICODE_ENABLE or UNICODEMAP_ENABLE
+#if !defined(UNICODE_ENABLE) && !defined(UNICODEMAP_ENABLE)
+void msu_mod_override(void) { /* Empty function */ }
+#endif // not Unicode defined
 
 // Logo Definition
 static void render_logo(void) {
@@ -552,10 +766,10 @@ bool oled_task_user(void) {
 
         switch (get_highest_layer(layer_state | default_layer_state)) {
             case _QWERTY:
-                oled_write_P(PSTR("Default\n"), false);
+                oled_write_P(PSTR("QWERTY\n"), false);
                 break;
-            case _COLEMAK:
-                oled_write_P(PSTR("Colemak\n"), false);
+            case _KHMER:
+                oled_write_P(PSTR("Khmer\n"), false);
                 break;
             case _FN:
                 oled_write_P(PSTR("Function\n"), false);
@@ -566,8 +780,8 @@ bool oled_task_user(void) {
             case _GAME:
                 oled_write_P(PSTR("Gaming\n"), false);
                 break;
-            case _MOUSE:
-                oled_write_P(PSTR("Mouse\n"), false);
+            case _ALTGR:
+                oled_write_P(PSTR("Alt Graphic\n"), false);
                 break;
             default:
                 oled_write_P(PSTR("Undefined\n"), false);
@@ -588,14 +802,21 @@ bool oled_task_user(void) {
         }
         #endif // DYNAMIC_MACRO_ENABLE
 
-        // Trackball DPI Reporting
-        #ifdef POINTING_DEVICE_ENABLE
-        oled_write_P(PSTR("DPI:"), false);
-        oled_write_P(PSTR(get_u16_str(user_config.dpi, ' ')), false);
-        oled_write_P(PSTR(" SEN:"), false);
-        oled_write_P(PSTR(get_u16_str((uint16_t)user_config.sen / 10, ' ')), false);
-        oled_write_P(PSTR("\n"), false);
-        #endif
+        if (display_override && timer_elapsed32(display_timer) < 7000) {
+            oled_write_ln(display_message, false);
+        }
+        else {
+            display_override = false;
+
+            // Trackball DPI Reporting
+            #ifdef POINTING_DEVICE_ENABLE
+            oled_write_P(PSTR("DPI:"), false);
+            oled_write_P(PSTR(get_u16_str(user_config.dpi, ' ')), false);
+            oled_write_P(PSTR(" SEN:"), false);
+            oled_write_P(PSTR(get_u16_str((uint16_t)user_config.sen / 10, ' ')), false);
+            oled_write_P(PSTR("\n"), false);
+            #endif
+        }
 
         // Host Keyboard LED Status (mostly)
         led_t led_state = host_keyboard_led_state();
@@ -616,7 +837,11 @@ bool oled_task_user(void) {
     return false;
 }
 #endif // OLED_ENABLE
-
+#ifndef OLED_ENABLE
+void set_display_message(const char* message) {
+    // Do nothing
+}
+#endif
 
 // custom function for temporary sensor troubleshooting
 uint8_t motion_found = 0x00;
@@ -651,6 +876,7 @@ void msu_debug_sensor_custom(void) {
 void matrix_scan_user(void) {
     msu_encoder_super_timer();
     msu_debug_sensor_custom();
+    msu_mod_override();
 }
 
 void keyboard_post_init_user(void) {
@@ -682,3 +908,4 @@ void pointing_device_init_user(void) {
     #endif
 
 }
+
