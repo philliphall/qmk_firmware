@@ -166,7 +166,9 @@ enum unicode_names {
     DAP_PRAM_ROC,         // 0x19FF, 143 ᧠ (Represents the first Ashadha)
 
     // Not necessarily Khmer, but widely used
-    ZWS                   // 0x200B, 144  (Zero Width Space)
+    ZWS,                  // 0x200B, 144  (Zero Width Space)
+    SPACE,                // 0x0020, 145 (space)
+    QMARK                 // 0x003F, 146 ? (Question Mark)
 };
 
 extern const uint32_t PROGMEM unicode_map[];
